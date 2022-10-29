@@ -274,15 +274,17 @@ const main = async function () {
                     nodeID != undefined &&
                     registeredNodeIDArray.includes(nodeID) == false
                   ) {
-                    if (graphNodeInfoArray[x][y] == null)
-                      graphNodeInfoArray[x][y] = new Array();
-                    graphNodeInfoArray[x][y].push({
-                      x: x,
-                      y: y,
-                      nodeID: nodeID,
-                      tags: tags,
-                    });
-                    registeredNodeIDArray.push(nodeID);
+                    if (tags.amenity != undefined && tags.name != undefined) {
+                      if (graphNodeInfoArray[x][y] == null)
+                        graphNodeInfoArray[x][y] = new Array();
+                      graphNodeInfoArray[x][y].push({
+                        x: x,
+                        y: y,
+                        nodeID: nodeID,
+                        tags: tags,
+                      });
+                      registeredNodeIDArray.push(nodeID);
+                    }
                   }
                 }
               }
