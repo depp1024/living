@@ -52,6 +52,15 @@ export class People {
         : playerData["a-little-word:en"];
     this.iconURL = playerData["icon"];
     this.speed = UtilsMath.randomRange(0.005, 0.015);
+    this.routingPatternIndex = 0;
+
+    const routingPatternString = playerData["routing-pattern"];
+    this.routingPatternArray = routingPatternString
+      .trim()
+      .split("|")
+      .map(function (item) {
+        return item.trim().replace(/\s+/g, " ").split(" ");
+      });
 
     this.L = L;
     this.map = map;
@@ -71,6 +80,7 @@ export class People {
 
     this.destination_place = "";
     this.destinationHistoryArray = new Array();
+    this.destination_amenity = "";
 
     this.popupContents =
       languageTopPriority == "ja"
@@ -180,10 +190,19 @@ export class People {
     });
     this.marker.addTo(this.map);
 
-    this.setNextGoalPlotPoint(this.startPlotPoint);
+    this.setNextGoalPlotPoint(
+      this.startPlotPoint,
+      this.routingPatternArray[this.routingPatternIndex],
+      plotArray
+    );
     this.updatePopup();
 
-    for (let i = 0; i < 10; i++) {
+    const routingPatternCount = 5;
+    for (
+      let i = 0;
+      i < this.routingPatternArray.length * routingPatternCount;
+      i++
+    ) {
       console.log(
         "i:" +
           i +
@@ -192,6 +211,8 @@ export class People {
           ":" +
           " Destination:" +
           this.destination_place +
+          " Amenity:" +
+          this.destination_amenity +
           " " +
           this.startPlotPoint.x +
           "," +
@@ -201,17 +222,20 @@ export class People {
           "," +
           this.goalPlotPoint.y
       );
-      this.setPlayerRoute(
-        this.startPlotPoint,
-        this.goalPlotPoint
-      );
+      this.setPlayerRoute(this.startPlotPoint, this.goalPlotPoint);
       await this.slideToAsync(
         this.marker,
         this.routeLatlngArray,
         this.routeNodeInfoArray
       );
+      this.routingPatternIndex =
+        (this.routingPatternIndex + 1) % this.routingPatternArray.length;
       this.startPlotPoint = this.goalPlotPoint;
-      this.setNextGoalPlotPoint(this.startPlotPoint, plotArray);
+      this.setNextGoalPlotPoint(
+        this.startPlotPoint,
+        this.routingPatternArray[this.routingPatternIndex],
+        plotArray
+      );
       this.updatePopup();
     }
 
@@ -246,15 +270,16 @@ export class People {
   /**
    * 次の目的地を更新する関数
    *
-   * @param {Object<Number, Number>} plotPoint - 次の目的地を示す2次元配列のインデックス
+   * @param {Object<Number, Number>} plotPoint - 現地点を示す2次元配列のインデックス
+   * @param {Array.Object<String>} amenityArray - 次の目的地の施設カテゴリデータ
    * @param {Array.Object<Number, Number>} plotArray - 移動可能な場所を2次元配列で格納したデータ
    * @memberof People
    */
-  setNextGoalPlotPoint(plotPoint, plotArray) {
+  setNextGoalPlotPoint(plotPoint, amenityArray, plotArray) {
     let nearestDestinationNodeInfo = this.getNearestFunction(
       this.nodeInfoPlotTree,
       { x: plotPoint.x, y: plotPoint.y },
-      10
+      1000
     );
     nearestDestinationNodeInfo = nearestDestinationNodeInfo.filter((data) => {
       let place_name = data[0].tags.name;
@@ -269,9 +294,17 @@ export class People {
         }
       }
 
+      // distance != 0 : 現在いる地点ではない(距離が0ではない)
+      // isDestinationHistoryIncludes == false : 過去に行った場所ではない
+      // isAmenityIncludes : 行きたい場所の施設であること
+      const distance = data[1];
+      const isAmenityIncludes = amenityArray.includes(data[0].tags.amenity);
+      const isDestinationHistoryIncludes =
+        this.destinationHistoryArray.includes(place_name);
       return (
-        data[1] != 0 &&
-        this.destinationHistoryArray.includes(place_name) == false
+        distance != 0 &&
+        isDestinationHistoryIncludes == false &&
+        isAmenityIncludes == true
       );
     });
 
@@ -294,12 +327,14 @@ export class People {
         }
       }
       this.destination_place = place_name;
+      this.destination_amenity = nearestDestinationNodeInfo[0][0].tags.amenity;
     } else {
       const indexGoal = Math.floor(
         UtilsMath.randomRange(0, plotArray.length - 1)
       );
       this.goalPlotPoint = plotArray[indexGoal];
       this.destination_place = "";
+      this.destination_amenity = "";
     }
 
     this.destinationHistoryArray.push(this.destination_place);

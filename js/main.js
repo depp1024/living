@@ -160,49 +160,32 @@ const main = async function () {
     console.log("finished to set up way");
 
     console.log("set up facility");
-    const ql = OSMApi.amenityQueryList;
-    const facilityQueryArray = [
-      {
-        category: "food",
-        amenityQueryArray: [
-          ql.bar,
-          ql.cafe,
-          ql.food_court,
-          ql.ice_cream,
-          ql.pub,
-          ql.restaurant,
-        ],
-        infoArray: null,
-      },
-    ];
     let facilityList = Array();
     let facilityInfo = null;
-    for (let i = 0; i < facilityQueryArray.length; i++) {
-      try {
-        const apiStatus = await OSMApi.getAPIStatus();
-        await delay(apiStatus.waittime + 100);
-        facilityInfo = await OSMApi.getFacilityInfo(
-          centerLatlng.lat,
-          centerLatlng.lng,
-          queryRadius,
-          facilityQueryArray[i].amenityQueryArray,
-          abortController.signal
-        );
-      } catch (err) {
-        throw err;
-      }
-      facilityQueryArray[i].infoArray = facilityInfo;
 
-      if (facilityQueryArray[i].infoArray != null) {
-        facilityQueryArray[i].infoArray.forEach(function (element) {
-          facilityList.push({
-            lat: element.lat,
-            lon: element.lon,
-            tags: element.tags,
-          });
-        });
-      }
+    try {
+      const apiStatus = await OSMApi.getAPIStatus();
+      await delay(apiStatus.waittime + 100);
+      facilityInfo = await OSMApi.getFacilityInfo(
+        centerLatlng.lat,
+        centerLatlng.lng,
+        queryRadius,
+        Object.values(OSMApi.amenityQueryList),
+        abortController.signal
+      );
+    } catch (err) {
+      throw err;
     }
+    if (facilityInfo != null) {
+      facilityInfo.forEach(function (element) {
+        facilityList.push({
+          lat: element.lat,
+          lon: element.lon,
+          tags: element.tags,
+        });
+      });
+    }
+
     let facilityTree = new kdTree(facilityList, distanceUsingLatlon, [
       "lat",
       "lon",
