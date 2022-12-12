@@ -62,6 +62,27 @@ export class People {
         return item.trim().replace(/\s+/g, " ").split(" ");
       });
 
+    const routingCommentString = playerData["routing-comment"];
+    const routingCommentObject = routingCommentString
+      .trim()
+      .split("|")
+      .map(function (item) {
+        const array = item.trim().replace(/\s+/g, " ").split(" ");
+        let keyValue = null;
+        if (array.length > 0) {
+          const key = array[0];
+          array.shift();
+          keyValue = { key, array };
+        }
+        return keyValue;
+      });
+    this.routingCommentMap = new Map();
+    routingCommentObject.forEach((element) => {
+      if (this.routingCommentMap.has(element.key) == false) {
+        this.routingCommentMap.set(element.key, element.array);
+      }
+    });
+
     this.L = L;
     this.map = map;
     this.rectLatLng = rectLatLng;
