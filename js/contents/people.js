@@ -31,7 +31,7 @@ export class People {
     nodeInfoPlotTree,
     getNearestFunction
   ) {
-    const languageTopPriority =
+    this.languageTopPriority =
       (window.navigator.languages && window.navigator.languages[0]) ||
       window.navigator.language ||
       window.navigator.userLanguage ||
@@ -39,17 +39,13 @@ export class People {
 
     this.peopleID = playerData["id"];
     this.name =
-      languageTopPriority == "ja"
+      this.languageTopPriority == "ja"
         ? playerData["name:ja"]
         : playerData["name:en"];
     this.selfintroduction =
-      languageTopPriority == "ja"
+      this.languageTopPriority == "ja"
         ? playerData["self-introduction:ja"]
         : playerData["self-introduction:en"];
-    this.comment =
-      languageTopPriority == "ja"
-        ? playerData["a-little-word:ja"]
-        : playerData["a-little-word:en"];
     this.iconURL = playerData["icon"];
     this.speed = UtilsMath.randomRange(0.005, 0.015);
     this.routingPatternIndex = 0;
@@ -104,20 +100,20 @@ export class People {
     this.destination_amenity = "";
 
     this.popupContents =
-      languageTopPriority == "ja"
+      this.languageTopPriority == "ja"
         ? {
             name: "名前:" + this.name,
-            destination: "目的地:",
-            place: "立ち寄った場所:",
             selfintroduction: "自己紹介:" + this.selfintroduction,
-            comment: "ちょっと一言:" + this.comment,
+            destination: "現在の行き先:",
+            place: "さっき寄った場所:",
+            comment: "",
           }
         : {
             name: "Name:" + this.name,
+            selfintroduction: "self-introduction:" + this.selfintroduction,
             destination: "Destination:",
             place: "stopped by:",
-            selfintroduction: "self-introduction:" + this.selfintroduction,
-            comment: "a little word:" + this.comment,
+            comment: "",
           };
 
     this.waitForSlideEnd = (marker, nodes) =>
@@ -186,7 +182,7 @@ export class People {
    * @memberof People
    */
   async run(plotArray) {
-    const indexStart = Math.floor(
+    const indexStart = Math.round(
       UtilsMath.randomRange(0, plotArray.length - 1)
     );
     this.startPlotPoint = plotArray[indexStart];
@@ -269,22 +265,39 @@ export class People {
    * @memberof People
    */
   updatePopup() {
+    const popupName = this.popupContents.name + "<br>";
+    const popupSelfintroduction = this.popupContents.selfintroduction + "<br>";
+
+    const popupDestination =
+      this.popupContents.destination + this.destination_place + "<br>";
+
     const historyPlace =
       this.destinationHistoryArray.length > 1
         ? this.destinationHistoryArray[this.destinationHistoryArray.length - 2]
+            .place
         : "";
+    const popupHistoryPlace =
+      historyPlace != ""
+        ? this.popupContents.place + historyPlace + "<br>"
+        : "";
+
+    const popupHistoryPlaceBorderLine = popupHistoryPlace != "" ? "<br>" : "";
+
+    const historyComment =
+      this.destinationHistoryArray.length > 1
+        ? this.destinationHistoryArray[this.destinationHistoryArray.length - 2]
+            .comment + "<br>"
+        : "";
+    const popupHistoryComment =
+      historyComment != "" ? this.popupContents.comment + historyComment : "";
+
     this.marker.bindPopup(
-      this.popupContents.name +
-        "<br>" +
-        this.popupContents.destination +
-        this.destination_place +
-        "<br>" +
-        this.popupContents.place +
-        historyPlace +
-        "<br>" +
-        this.popupContents.selfintroduction +
-        "<br>" +
-        this.popupContents.comment
+      popupName +
+        popupSelfintroduction +
+        popupDestination +
+        popupHistoryPlaceBorderLine +
+        popupHistoryPlace +
+        popupHistoryComment
     );
   }
 
@@ -320,8 +333,11 @@ export class People {
       // isAmenityIncludes : 行きたい場所の施設であること
       const distance = data[1];
       const isAmenityIncludes = amenityArray.includes(data[0].tags.amenity);
+      const historyObject = this.destinationHistoryArray.find(
+        (value) => value.place == place_name
+      );
       const isDestinationHistoryIncludes =
-        this.destinationHistoryArray.includes(place_name);
+        historyObject != undefined ? true : false;
       return (
         distance != 0 &&
         isDestinationHistoryIncludes == false &&
@@ -350,7 +366,7 @@ export class People {
       this.destination_place = place_name;
       this.destination_amenity = nearestDestinationNodeInfo[0][0].tags.amenity;
     } else {
-      const indexGoal = Math.floor(
+      const indexGoal = Math.round(
         UtilsMath.randomRange(0, plotArray.length - 1)
       );
       this.goalPlotPoint = plotArray[indexGoal];
@@ -358,7 +374,21 @@ export class People {
       this.destination_amenity = "";
     }
 
-    this.destinationHistoryArray.push(this.destination_place);
+    let comment = "";
+    if (this.routingCommentMap.has(this.destination_amenity)) {
+      const amenityCommentArray = this.routingCommentMap.get(
+        this.destination_amenity
+      );
+      const selectedCommentIndex = Math.round(
+        UtilsMath.randomRange(0, amenityCommentArray.length - 1)
+      );
+      comment = "「" + amenityCommentArray[selectedCommentIndex] + "」";
+    }
+
+    this.destinationHistoryArray.push({
+      place: this.destination_place,
+      comment: comment,
+    });
   }
 
   /**
