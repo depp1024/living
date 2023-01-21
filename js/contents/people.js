@@ -46,6 +46,10 @@ export class People {
       this.languageTopPriority == "ja"
         ? playerData["self-introduction:ja"]
         : playerData["self-introduction:en"];
+    this.littleword =
+      this.languageTopPriority == "ja"
+        ? playerData["a-little-word:ja"]
+        : playerData["a-little-word:en"];
     this.iconURL = playerData["icon"];
     this.speed = UtilsMath.randomRange(0.005, 0.015);
     this.routingPatternIndex = 0;
@@ -104,6 +108,7 @@ export class People {
         ? {
             name: "名前:" + this.name,
             selfintroduction: "自己紹介:" + this.selfintroduction,
+            littleword: "一言:" + this.littleword,
             destination: "現在の行き先:",
             place: "さっき寄った場所:",
             comment: "",
@@ -111,6 +116,7 @@ export class People {
         : {
             name: "Name:" + this.name,
             selfintroduction: "self-introduction:" + this.selfintroduction,
+            littleword: "a little word:" + this.littleword,
             destination: "Destination:",
             place: "stopped by:",
             comment: "",
@@ -267,7 +273,8 @@ export class People {
   updatePopup() {
     const popupName = this.popupContents.name + "<br>";
     const popupSelfintroduction = this.popupContents.selfintroduction + "<br>";
-
+    const popupLittleWord = this.popupContents.littleword + "<br>";
+    
     const popupDestination =
       this.popupContents.destination + this.destination_place + "<br>";
 
@@ -294,6 +301,7 @@ export class People {
     this.marker.bindPopup(
       popupName +
         popupSelfintroduction +
+        popupLittleWord +
         popupDestination +
         popupHistoryPlaceBorderLine +
         popupHistoryPlace +
