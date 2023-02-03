@@ -8,6 +8,9 @@ import { OSMApi } from "./contents/api-openstreetmap.js";
  *
  */
 const main = async function () {
+  // 乱数シード値初期化
+  Math.random.seed(1);
+
   // global variables
   let osmAPIAbortController = null;
 

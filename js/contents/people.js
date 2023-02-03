@@ -220,7 +220,7 @@ export class People {
     );
     this.updatePopup();
 
-    const routingPatternCount = 5;
+    const routingPatternCount = 500;
     for (
       let i = 0;
       i < this.routingPatternArray.length * routingPatternCount;
@@ -380,6 +380,16 @@ export class People {
       this.goalPlotPoint = plotArray[indexGoal];
       this.destination_place = "";
       this.destination_amenity = "";
+    }
+
+    // ルートがあるかチェックしてなければ現在地を目的地にしてもう一度別の場所を探すようにする
+    const route = astar.search(
+      this.graph,
+      this.graph.grid[plotPoint.x][plotPoint.y],
+      this.graph.grid[this.goalPlotPoint.x][this.goalPlotPoint.y]
+    );
+    if(route.length == 0) {
+      this.goalPlotPoint = plotPoint;
     }
 
     let comment = "";
