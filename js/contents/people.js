@@ -167,6 +167,8 @@ export class People {
             }
           });
       });
+
+    this.wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -260,6 +262,9 @@ export class People {
         plotArray
       );
       this.updatePopup();
+
+      // 目的地に到着してしばらく立ち止まる処理
+      await this.wait(5000);
     }
 
     console.log("移動終了. PeopleID:" + this.name);
@@ -274,7 +279,7 @@ export class People {
     const popupName = this.popupContents.name + "<br>";
     const popupSelfintroduction = this.popupContents.selfintroduction + "<br>";
     const popupLittleWord = this.popupContents.littleword + "<br>";
-    
+
     const popupDestination =
       this.popupContents.destination + this.destination_place + "<br>";
 
@@ -289,6 +294,21 @@ export class People {
         : "";
 
     const popupHistoryPlaceBorderLine = popupHistoryPlace != "" ? "<br>" : "";
+
+    if (this.destinationHistoryArray.length > 1) {
+      const test =
+        this.destinationHistoryArray[this.destinationHistoryArray.length - 2]
+          .comment;
+      const place = this.destination_place;
+      console.log("@@@@@@@@@@@@:" + place + " : " + test);
+
+      if (place != "" && test == "") {
+        console.log("-----------");
+      }
+      if (test == "") {
+        console.log("@@@@@@@@@@@@:" + test);
+      }
+    }
 
     const historyComment =
       this.destinationHistoryArray.length > 1
@@ -388,7 +408,7 @@ export class People {
       this.graph.grid[plotPoint.x][plotPoint.y],
       this.graph.grid[this.goalPlotPoint.x][this.goalPlotPoint.y]
     );
-    if(route.length == 0) {
+    if (route.length == 0) {
       this.goalPlotPoint = plotPoint;
     }
 
@@ -401,6 +421,10 @@ export class People {
         UtilsMath.randomRange(0, amenityCommentArray.length - 1)
       );
       comment = "「" + amenityCommentArray[selectedCommentIndex] + "」";
+    }
+
+    if (comment == "" && this.destination_place != "") {
+      console.log("comment nothing.");
     }
 
     this.destinationHistoryArray.push({
