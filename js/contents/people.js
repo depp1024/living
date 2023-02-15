@@ -295,21 +295,6 @@ export class People {
 
     const popupHistoryPlaceBorderLine = popupHistoryPlace != "" ? "<br>" : "";
 
-    if (this.destinationHistoryArray.length > 1) {
-      const test =
-        this.destinationHistoryArray[this.destinationHistoryArray.length - 2]
-          .comment;
-      const place = this.destination_place;
-      console.log("@@@@@@@@@@@@:" + place + " : " + test);
-
-      if (place != "" && test == "") {
-        console.log("-----------");
-      }
-      if (test == "") {
-        console.log("@@@@@@@@@@@@:" + test);
-      }
-    }
-
     const historyComment =
       this.destinationHistoryArray.length > 1
         ? this.destinationHistoryArray[this.destinationHistoryArray.length - 2]
