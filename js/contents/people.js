@@ -228,25 +228,7 @@ export class People {
       i < this.routingPatternArray.length * routingPatternCount;
       i++
     ) {
-      console.log(
-        "i:" +
-          i +
-          " " +
-          this.name +
-          ":" +
-          " Destination:" +
-          this.destination_place +
-          " Amenity:" +
-          this.destination_amenity +
-          " " +
-          this.startPlotPoint.x +
-          "," +
-          this.startPlotPoint.y +
-          ":" +
-          this.goalPlotPoint.x +
-          "," +
-          this.goalPlotPoint.y
-      );
+      this.logMovement();
       this.setPlayerRoute(this.startPlotPoint, this.goalPlotPoint);
       await this.slideToAsync(
         this.marker,
@@ -467,5 +449,29 @@ export class People {
    */
   async slideToAsync(marker, nodes) {
     await this.waitForSlideEnd(marker, nodes);
+  }
+
+  /**
+   * キャラクターの移動に関するログを表示
+   *
+   * @memberof People
+   */
+  logMovement() {
+    console.log(
+        this.name +
+        ":" +
+        " Destination:" +
+        this.destination_place +
+        " Amenity:" +
+        this.destination_amenity +
+        " " +
+        this.startPlotPoint.x +
+        "," +
+        this.startPlotPoint.y +
+        ":" +
+        this.goalPlotPoint.x +
+        "," +
+        this.goalPlotPoint.y
+    );
   }
 }
