@@ -142,7 +142,6 @@ export class People {
           nodes[nodeIndex]
         );
         nextDurationTime = nextDurationTime != 0 ? nextDurationTime : 100;
-        //console.log('peopleID:' + peopleID + ' index:' + nodeIndex + ' marker:' + marker.getLatLng() + ' duration:' + nextDurationTime);
 
         marker
           .slideTo(nodes[nodeIndex], {
@@ -245,7 +244,8 @@ export class People {
       );
       this.updatePopup();
 
-      // 目的地に到着してしばらく立ち止まる処理
+      // 目的地に到着してしばらく立ち止まり跳ねるアニメーション処理
+      this.marker.bounce(2);
       await this.wait(5000);
     }
 
@@ -458,7 +458,7 @@ export class People {
    */
   logMovement() {
     console.log(
-        this.name +
+      this.name +
         ":" +
         " Destination:" +
         this.destination_place +
