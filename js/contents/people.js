@@ -246,7 +246,9 @@ export class People {
 
       // 目的地に到着してしばらく立ち止まり跳ねるアニメーション処理
       this.marker.bounce(2);
-      await this.wait(5000);
+      this.marker.openPopup();
+      await this.wait(2000);
+      this.marker.closePopup();
     }
 
     console.log("移動終了. PeopleID:" + this.name);
@@ -292,7 +294,8 @@ export class People {
         popupDestination +
         popupHistoryPlaceBorderLine +
         popupHistoryPlace +
-        popupHistoryComment
+        popupHistoryComment,
+        { autoClose:false }
     );
   }
 
