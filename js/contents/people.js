@@ -122,7 +122,12 @@ export class People {
             comment: "",
           };
 
-    this.waitForSlideEnd = (marker, nodes) =>
+    this.peopleList = null;
+    this.isTalking = false;
+    this.talkingOrder = -1;
+    this.talkedPeopleList = new Array();
+
+    this.waitForSlideEnd = (peopleInstance, marker, nodes) =>
       new Promise((resolve) => {
         // 移動ノードが１つもない場合は移動させない
         if (nodes.length == 0) {
@@ -148,7 +153,33 @@ export class People {
             duration: nextDurationTime,
             keepAtCenter: false,
           })
-          .on("moveend", function () {
+          .on("moveend", async function () {
+            const closedPeople = People.getClosedPeople(peopleInstance, 50);
+            if (closedPeople.length > 0) {
+              peopleInstance.isTalking = true;
+              peopleInstance.talkingOrder = 0;          
+              peopleInstance.talkedPeopleList.push(closedPeople[0].peopleID);              
+              closedPeople[0].isTalking = true;
+              closedPeople[0].talkingOrder = 1;
+              closedPeople[0].talkedPeopleList.push(peopleInstance.peopleID);
+            }
+
+            if(peopleInstance.isTalking) {
+              peopleInstance.marker.bounce(2);
+              await People.wait(2000);
+
+              const talkingTime = 5000;
+              if(peopleInstance.talkingOrder)
+              await People.wait(talkingTime * peopleInstance.talkingOrder);
+              peopleInstance.marker.openPopup();              
+              await People.wait(talkingTime);
+              peopleInstance.marker.closePopup();
+              await People.wait(talkingTime * (1 - peopleInstance.talkingOrder));
+
+              peopleInstance.isTalking = false;
+              peopleInstance.talkingOrder = -1;
+            }
+
             nodeIndex++;
             if (nodes.length <= nodeIndex) {
               resolve();
@@ -166,8 +197,6 @@ export class People {
             }
           });
       });
-
-    this.wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -245,13 +274,23 @@ export class People {
       this.updatePopup();
 
       // 目的地に到着してしばらく立ち止まり跳ねるアニメーション処理
-      this.marker.bounce(2);
-      this.marker.openPopup();
-      await this.wait(2000);
-      this.marker.closePopup();
+      // this.marker.bounce(2);
+      // this.marker.openPopup();
+      // await People.wait(2000);
+      // this.marker.closePopup();
     }
 
     console.log("移動終了. PeopleID:" + this.name);
+  }
+
+  /**
+   * 停止処理
+   *
+   * @param {Number} ms : 停止時間
+   * @memberof People
+   */
+  async stop(ms) {
+    await People.wait(ms);
   }
 
   /**
@@ -295,7 +334,7 @@ export class People {
         popupHistoryPlaceBorderLine +
         popupHistoryPlace +
         popupHistoryComment,
-        { autoClose:false }
+      { autoClose: false }
     );
   }
 
@@ -451,7 +490,56 @@ export class People {
    * @memberof People
    */
   async slideToAsync(marker, nodes) {
-    await this.waitForSlideEnd(marker, nodes);
+    await this.waitForSlideEnd(this, marker, nodes);
+  }
+
+  /**
+   * キャラクターのリストをセットする関数
+   * キャラクター同士の当たり判定を処理するため
+   *
+   * @param {Array.<Object>} list
+   * @memberof People
+   */
+  setPlayerList(list) {
+    this.peopleList = list;
+  }
+
+  /**
+   * すれ違って話をする人を返却する関数
+   * 距離が近く、すれ違い状態にいない人、まだ会話をしていない人を返却
+   *
+   * @param {Object} peopleInstance
+   * @param {Number} radius
+   * @return {boolean} true:近くにいる、false:近くにいない
+   * @memberof People
+   */
+  static getClosedPeople(peopleInstance, radius) {
+    return peopleInstance.peopleList.filter(function (people) {
+      const own = peopleInstance.marker.getLatLng();
+      const tgt = people.marker.getLatLng();
+      const distance = peopleInstance.map.distance(own, tgt);
+      return (
+        distance < radius &&
+        peopleInstance.peopleID != people.peopleID &&
+        peopleInstance.isTalking == false &&
+        people.isTalking == false &&
+        peopleInstance.talkedPeopleList.includes(people.peopleID) == false
+      );
+    });
+  }
+
+  /**
+   * 一時停止関数
+   *
+   * @param {Number} ms - 停止するミリ秒
+   * @memberof People
+   */
+  static wait(ms) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        resolve();
+      }, ms);
+    });
   }
 
   /**

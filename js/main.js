@@ -343,6 +343,9 @@ const main = async function () {
         console.error(e);
       }
     });
+
+    peopleList.forEach((element) => element.setPlayerList(peopleList));
+
     console.log("finished to set up people");
 
     return {
