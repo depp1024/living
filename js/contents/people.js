@@ -10,6 +10,7 @@ export class People {
   /**
    * Creates an instance of People.
    * @param {Object} playerData - キャラクターのデータ一式
+   * @param {Object} talkContents - キャラクター同士の会話データ一式
    * @param {Object} L - Leafletのグローバルインスタンス
    * @param {Object} map - Leafletの地図関連のインスタンス
    * @param {Object.<Array.<Number>, Array.<Number>>} rectLatLng - 緯度経度の矩形範囲
@@ -22,6 +23,7 @@ export class People {
    */
   constructor(
     playerData,
+    talkContents,
     L,
     map,
     rectLatLng,
@@ -37,7 +39,10 @@ export class People {
       window.navigator.userLanguage ||
       window.navigator.browserLanguage;
 
+    this.talkContents = talkContents;
+
     this.peopleID = playerData["id"];
+    this.nickname = playerData["nickname"];
     this.name =
       this.languageTopPriority == "ja"
         ? playerData["name:ja"]
@@ -126,6 +131,7 @@ export class People {
     this.isTalking = false;
     this.talkingOrder = -1;
     this.talkedPeopleList = new Array();
+    this.talkedPeopleIDList = new Array();
 
     this.waitForSlideEnd = (peopleInstance, marker, nodes) =>
       new Promise((resolve) => {
@@ -157,24 +163,56 @@ export class People {
             const closedPeople = People.getClosedPeople(peopleInstance, 50);
             if (closedPeople.length > 0) {
               peopleInstance.isTalking = true;
-              peopleInstance.talkingOrder = 0;          
-              peopleInstance.talkedPeopleList.push(closedPeople[0].peopleID);              
+              peopleInstance.talkingOrder = 0;
+              peopleInstance.talkedPeopleList.push(closedPeople[0]);
+              peopleInstance.talkedPeopleIDList.push(closedPeople[0].peopleID);
               closedPeople[0].isTalking = true;
               closedPeople[0].talkingOrder = 1;
-              closedPeople[0].talkedPeopleList.push(peopleInstance.peopleID);
+              closedPeople[0].talkedPeopleList.push(peopleInstance);
+              closedPeople[0].talkedPeopleIDList.push(peopleInstance.peopleID);
             }
 
-            if(peopleInstance.isTalking) {
-              peopleInstance.marker.bounce(2);
-              await People.wait(2000);
+            if (peopleInstance.isTalking) {
+              let nickname01 = "";
+              let nickname02 = "";
+              if (peopleInstance.talkingOrder == 0) {
+                nickname01 = peopleInstance.nickname;
+                nickname02 =
+                  peopleInstance.talkedPeopleList[
+                    peopleInstance.talkedPeopleList.length - 1
+                  ].nickname;
+              } else {
+                nickname01 =
+                  peopleInstance.talkedPeopleList[
+                    peopleInstance.talkedPeopleList.length - 1
+                  ].nickname;
+                nickname02 = peopleInstance.nickname;
+              }
 
-              const talkingTime = 5000;
-              if(peopleInstance.talkingOrder)
-              await People.wait(talkingTime * peopleInstance.talkingOrder);
-              peopleInstance.marker.openPopup();              
-              await People.wait(talkingTime);
-              peopleInstance.marker.closePopup();
-              await People.wait(talkingTime * (1 - peopleInstance.talkingOrder));
+              try {
+                const talkArray =
+                  peopleInstance.talkContents[nickname01][nickname02];
+
+                console.log(
+                  peopleInstance.nickname + "," + peopleInstance.talkingOrder
+                );
+
+                peopleInstance.marker.bounce(2);
+                await People.wait(2000);
+
+                const talkingTime = 5000;
+
+                for (let i = 0; i < talkArray.length; i++) {
+                  if (talkArray[i].includes(peopleInstance.nickname)) {
+                    peopleInstance.marker.bindPopup(talkArray[i], {
+                      autoClose: true,
+                    });
+                    peopleInstance.marker.openPopup();
+                  }
+                  await People.wait(talkingTime);
+                  peopleInstance.marker.closePopup();
+                }
+              } catch (e) {}
 
               peopleInstance.isTalking = false;
               peopleInstance.talkingOrder = -1;
@@ -523,7 +561,7 @@ export class People {
         peopleInstance.peopleID != people.peopleID &&
         peopleInstance.isTalking == false &&
         people.isTalking == false &&
-        peopleInstance.talkedPeopleList.includes(people.peopleID) == false
+        peopleInstance.talkedPeopleIDList.includes(people.peopleID) == false
       );
     });
   }
@@ -548,6 +586,7 @@ export class People {
    * @memberof People
    */
   logMovement() {
+    return;
     console.log(
       this.name +
         ":" +

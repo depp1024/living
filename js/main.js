@@ -1,4 +1,5 @@
 import { UtilsMath } from "./utils/utils-math.js";
+import { UtilsCSV } from "./utils/utils-csv.js";
 import { People } from "./contents/people.js";
 import { GASApi } from "./contents/api-googleappsscript.js";
 import { OSMApi } from "./contents/api-openstreetmap.js";
@@ -308,6 +309,23 @@ const main = async function () {
     let graph = new Graph(graphArray);
     console.log("set up people");
 
+    // talk content
+    let talkContents = {};
+    let talkContentList = await readTalkData();
+    talkContentList.forEach(function (element, index, array) {
+      var splitList = element[0].split(",");
+      var talkList = splitList[2]
+        .replaceAll("「", "：")
+        .split("」")
+        .filter(Boolean);
+      const key1 = splitList[0];
+      const key2 = splitList[1];
+      var obj = {};
+      obj[key2] = talkList;
+      if (talkContents[key1] == null) talkContents[key1] = obj;
+      else talkContents[key1][key2] = talkList;
+    });
+
     // let test_player = new People(
     //   npcObjects[0],
     //   L,
@@ -328,6 +346,7 @@ const main = async function () {
       try {
         let player = new People(
           npcObjects[key],
+          talkContents,
           L,
           map,
           rectLatLng,
@@ -459,6 +478,18 @@ const main = async function () {
   // utility function
   const delay = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+/**
+ * キャラクター会話データ読み込み
+ *
+ * @return {*}
+ */
+async function readTalkData() {
+  let csv = new XMLHttpRequest();
+  csv.open("GET", "../data/talk.csv", false);
+  csv.send(null);
+  return UtilsCSV.convertCSVtoArray(csv.responseText);
+}
 
 // エントリーポイント(Mainプログラム実行)
 try {
