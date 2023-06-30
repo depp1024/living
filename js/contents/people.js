@@ -312,6 +312,7 @@ export class People {
       this.updatePopup();
 
       // 目的地に到着してしばらく立ち止まり跳ねるアニメーション処理
+      this.marker.toggleBouncing();
       // this.marker.bounce(2);
       // this.marker.openPopup();
       // await People.wait(2000);

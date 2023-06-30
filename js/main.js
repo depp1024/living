@@ -1,6 +1,7 @@
 import { UtilsMath } from "./utils/utils-math.js";
 import { UtilsCSV } from "./utils/utils-csv.js";
 import { People } from "./contents/people.js";
+import { GuiAddPlayer } from "./contents/guiAddPlayer.js";
 import { GASApi } from "./contents/api-googleappsscript.js";
 import { OSMApi } from "./contents/api-openstreetmap.js";
 
@@ -23,6 +24,19 @@ const main = async function () {
 
   // area content
   let areaContentList = Array();
+  let plotArray = null;
+  let talkContents = {};
+  let npcObjects = null;
+  let centerLatlng = null;
+  const queryRadius = 0.5;
+  let rectLatLng = null;
+  let graph = null;
+  let graphNodeInfoArray = null;
+  let wayInfo = null;
+  let nodeInfoPlotTree = null;
+  let facilityTree = null;
+  let peopleList = null;
+  window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
   let map = L.map("mapid");
@@ -42,9 +56,10 @@ const main = async function () {
   // 地図上の操作イベントハンドラ
   map.on("keypress", async function (e) {
     if (e.originalEvent.key == "1") {
-      if (osmAPIAbortController) {
-        osmAPIAbortController.abort();
-      }
+      addPlayer();           
+      // if (osmAPIAbortController) {
+      //   osmAPIAbortController.abort();
+      // }
     }
   });
 
@@ -67,6 +82,10 @@ const main = async function () {
       clearAreaContent();
     }
   });
+
+  // GUI
+  let gui = new GuiAddPlayer(L);
+  gui.show(L, map, "");  
 
   /**
    * 地図上にコンテンツを表示する関数
@@ -92,6 +111,27 @@ const main = async function () {
   }
 
   /**
+   * 最短経路計算関数　Tree用
+   * @param {*} tree 
+   * @param {*} searchPosition 
+   * @param {*} counts 
+   * @returns 
+   */
+  function getNearestFunction(tree, searchPosition, counts) {
+    let nearest = tree.nearest(searchPosition, counts);
+    nearest.sort(function (first, second) {
+      if (first[1] > second[1]) {
+        return 1;
+      } else if (first[1] < second[1]) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+    return nearest;
+  }  
+
+  /**
    * 地図上のコンテンツをセットアップする関数
    *
    * @param {Object} map - Leafletのmapインスタンス
@@ -100,30 +140,16 @@ const main = async function () {
    */
   async function setupAreaContent(map, abortController) {
     // 共通処理
-    const centerLatlng = map.getCenter();
+    centerLatlng = map.getCenter();
     const distanceUsingLatlon = function (a, b) {
       return map.distance(L.latLng(a.lat, a.lon), L.latLng(b.lat, b.lon));
     };
     const distanceUsingPlot = function (a, b) {
       return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
     };
-    function getNearestFunction(tree, searchPosition, counts) {
-      let nearest = tree.nearest(searchPosition, counts);
-      nearest.sort(function (first, second) {
-        if (first[1] > second[1]) {
-          return 1;
-        } else if (first[1] < second[1]) {
-          return -1;
-        } else {
-          return 0;
-        }
-      });
-      return nearest;
-    }
 
     console.log("set up way");
-    const queryRadius = 0.5;
-    const rectLatLng = UtilsMath.getLatLngRect(
+    rectLatLng = UtilsMath.getLatLngRect(
       centerLatlng.lat,
       centerLatlng.lng,
       queryRadius
@@ -142,13 +168,13 @@ const main = async function () {
     const nodeAsterSizeX = nodeAsterTopright[0] - nodeAsterBottomleft[0];
     const nodeAsterSizeY = nodeAsterTopright[1] - nodeAsterBottomleft[1];
     let graphArray = new Array(nodeAsterSizeX);
-    let graphNodeInfoArray = new Array(nodeAsterSizeX);
+    graphNodeInfoArray = new Array(nodeAsterSizeX);
     for (let x = 0; x < nodeAsterSizeX; x++) {
       graphArray[x] = new Array(nodeAsterSizeY).fill(0);
       graphNodeInfoArray[x] = new Array(nodeAsterSizeY).fill(null);
     }
 
-    let wayInfo = null;
+    wayInfo = null;
     try {
       const apiStatus = await OSMApi.getAPIStatus();
       await delay(apiStatus.waittime + 100);
@@ -190,7 +216,7 @@ const main = async function () {
       });
     }
 
-    let facilityTree = new kdTree(facilityList, distanceUsingLatlon, [
+    facilityTree = new kdTree(facilityList, distanceUsingLatlon, [
       "lat",
       "lon",
     ]);
@@ -219,7 +245,7 @@ const main = async function () {
     console.log("finished to set up facility");
 
     // create navigation map
-    let plotArray = new Array();
+    plotArray = new Array();
     let registeredNodeIDArray = new Array();
     for (const [, value] of Object.entries(wayInfo.way)) {
       if (value.nodes.length > 1) {
@@ -301,16 +327,16 @@ const main = async function () {
       .flat()
       .filter((data) => data != null)
       .flat();
-    let nodeInfoPlotTree = new kdTree(nodeInfoPlotArray, distanceUsingPlot, [
+    nodeInfoPlotTree = new kdTree(nodeInfoPlotArray, distanceUsingPlot, [
       "x",
       "y",
     ]);
 
-    let graph = new Graph(graphArray);
+    graph = new Graph(graphArray);
     console.log("set up people");
 
     // talk content
-    let talkContents = {};
+    talkContents = {};
     let talkContentList = await readTalkData();
     talkContentList.forEach(function (element, index, array) {
       var splitList = element[0].split(",");
@@ -340,8 +366,8 @@ const main = async function () {
     //   getNearestFunction
     // );
     // test_player.run(plotArray);
-    let peopleList = Array();
-    const npcObjects = await readNPCData();
+    peopleList = Array();
+    npcObjects = await readNPCData();
     Object.keys(npcObjects).forEach(function (key) {
       try {
         let player = new People(
@@ -386,6 +412,18 @@ const main = async function () {
         people = null;
       });
       content = null;
+      plotArray = null;
+      talkContents = {};
+      npcObjects = null;
+      centerLatlng = null;
+      rectLatLng = null;
+      graph = null;
+      graphNodeInfoArray = null;
+      wayInfo = null;
+      nodeInfoPlotTree = null;
+      facilityTree = null;
+      
+      peopleList = null;
     });
     areaContentList.length = 0;
 
@@ -474,6 +512,44 @@ const main = async function () {
 
     return npcObjects;
   }
+
+  /**
+   * プレイヤー追加API
+   */
+  function addPlayer() {
+    let iconImage = gui.getImageData();
+
+    const name = 'Player';
+    let playerInfo = {
+      'a-little-word:en':'Workwash liquor',
+      'a-little-word:ja':'はしご酒中',
+      'icon':iconImage,
+      'id':'1',
+      'name:en':name,
+      'name:ja':name,
+      'nickname':'梯子酒のOL',
+      'routing-comment':'restaurant 飲んだ後はラーメンよね セットで1500円なんてハッピー|cafe BIGチョコレートパフェ！いぇい！|doctors 数値が心配… 健康診断怖い…|dentist 歯医者はいつ行かなくてよくなるんだろ|atm 飲み代こそっとおろそうっと|bank 飲み代こそっとおろそうっと',
+      'routing-pattern':'restaurant cafe|doctors dentist|atm bank',
+      'self-introduction:en':'I love alcohol',
+      'self-introduction:ja':'お酒大好き',  
+    };
+
+    let player = new People(
+      playerInfo,
+      talkContents,
+      L,
+      map,
+      rectLatLng,
+      graph,
+      graphNodeInfoArray,
+      wayInfo,
+      nodeInfoPlotTree,
+      getNearestFunction
+    );
+    player.run(plotArray);
+    peopleList.push(player);
+    peopleList.forEach((element) => element.setPlayerList(peopleList));
+  }  
 
   // utility function
   const delay = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
