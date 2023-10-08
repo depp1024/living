@@ -56,6 +56,7 @@ export class People {
         ? playerData["a-little-word:ja"]
         : playerData["a-little-word:en"];
     this.iconURL = playerData["icon"];
+    this.color = playerData["color"];
     this.speed = UtilsMath.randomRange(0.005, 0.015);
     this.routingPatternIndex = 0;
 
@@ -160,7 +161,7 @@ export class People {
             keepAtCenter: false,
           })
           .on("moveend", async function () {
-            const closedPeople = People.getClosedPeople(peopleInstance, 50);
+            const closedPeople = People.getClosedPeople(peopleInstance, 100);
             if (closedPeople.length > 0) {
               peopleInstance.isTalking = true;
               peopleInstance.talkingOrder = 0;
@@ -204,10 +205,17 @@ export class People {
 
                 for (let i = 0; i < talkArray.length; i++) {
                   if (talkArray[i].includes(peopleInstance.nickname)) {
-                    peopleInstance.marker.bindPopup(talkArray[i], {
+                    let tagID = "peopleID" + peopleInstance.peopleID;
+                    peopleInstance.marker.bindPopup("<span id=\"" + tagID + "\"/>" + talkArray[i], {
                       autoClose: true,
                     });
                     peopleInstance.marker.openPopup();
+
+                    let spanTag = $("#" + tagID);
+                    let contentWrapper = spanTag.parent().parent().parent().find(".leaflet-popup-content-wrapper");
+                    let tip = spanTag.parent().parent().parent().find(".leaflet-popup-tip");
+                    contentWrapper.css("border-color", peopleInstance.color);
+                    tip.css("border-color", peopleInstance.color);
                   }
                   await People.wait(talkingTime);
                   peopleInstance.marker.closePopup();

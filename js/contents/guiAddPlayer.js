@@ -12,7 +12,7 @@ export class GuiAddPlayer {
 
     L.CustomControl = L.Control.extend({
       onAdd: function (map) {
-        this._div = L.DomUtil.create("div", "custom-panel leaflet-bar");
+        this._div = L.DomUtil.create("div", "");
         return this._div;
       },
 
@@ -23,29 +23,31 @@ export class GuiAddPlayer {
           '<div>キャラクター作成</div><div><div>キャラクター名</div><input type="text" name="text" value="" /></div><div><div>アイコン</div><input id="icon" type="file" name="file"/></div><div><div>ニックネーム</div><div id="nick01">癒しの</div><div id="nick02">スポーツマン</div></div>' +
           '<a href="#" onclick="addPlayer();">追加</a>';
 
-        let inputIconElement = document.getElementById("icon");
-        inputIconElement.addEventListener("change", roadImg, false);
+        this._div.innerHTML = '<iframe src="home.html" width="320" height="450" frameBorder="0" scrolling="no"/>';
 
-        function roadImg(e) {
-          const file = this.files[0];
-          let reader = new FileReader();
-          reader.onload = () => {
-            const imgData = reader.result;
-            _this.imageData = imgData;
-            // _this.imageData =  resizeImg(imgData);
-            // localStorage.setItem('thumbnail', resizedImgData.result);
-          };
-          reader.readAsDataURL(file);
-        }
+        // let inputIconElement = document.getElementById("icon");
+        // inputIconElement.addEventListener("change", roadImg, false);
 
-        function resizeImg(imgData) {
-          const canvas = document.createElement("canvas");
-          canvas.width = 50;
-          canvas.height = 50;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(imgData, 0, 0, 50, 50);
-          return canvas.toDataURL("image/png");
-        }
+        // function roadImg(e) {
+        //   const file = this.files[0];
+        //   let reader = new FileReader();
+        //   reader.onload = () => {
+        //     const imgData = reader.result;
+        //     _this.imageData = imgData;
+        //     // _this.imageData =  resizeImg(imgData);
+        //     // localStorage.setItem('thumbnail', resizedImgData.result);
+        //   };
+        //   reader.readAsDataURL(file);
+        // }
+
+        // function resizeImg(imgData) {
+        //   const canvas = document.createElement("canvas");
+        //   canvas.width = 50;
+        //   canvas.height = 50;
+        //   const ctx = canvas.getContext("2d");
+        //   ctx.drawImage(imgData, 0, 0, 50, 50);
+        //   return canvas.toDataURL("image/png");
+        // }
         return this;
       },
 

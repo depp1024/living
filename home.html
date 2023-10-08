@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LivingMap</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/profile.css" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script
       async
@@ -19,16 +20,44 @@
       gtag("js", new Date());
       gtag("config", "G-R9LLW9SJFT");
     </script>
-    <script>
-        function OnLinkClick() {
-            target = document.getElementById("output");
-            target.innerHTML = "Penguin";
-            return false;
-        }        
-    </script>
   </head>
   <body>
-    <main>
+    <div class="window">
+      <div class="box header">
+        <img id="icon-user-profile" src="/img/user-icon.png" />
+        <label for="file-input">
+          <img id="icon-camera" src="/img/upload-button.png" />
+        </label>
+        <input id="file-input" type="file" />
+      </div>
+      <div class="box footer">
+        <div class="">ニックネーム</div>
+        <ul>
+          <li><a href="javascript:void(0);">マイペースの</a></li>
+          <li><a href="javascript:void(0);">魔術師</a></li>
+        </ul>
+        <a href="javascript:void(0);" class="btn" onclick="window.parent.addPlayer(); return false;" >街で暮らす</a>
+      </div>
+    </div>
+    <script>
+      let fileInputElement = document.getElementById("file-input");
+      fileInputElement.addEventListener("change", roadImg, false);
+
+      function roadImg(e) {
+        const file = this.files[0];
+        let reader = new FileReader();
+        reader.onload = () => {
+          const imgData = reader.result;
+          let userProfileElement = document.getElementById("icon-user-profile");
+          userProfileElement.src = imgData;
+          // _this.imageData = imgData;
+          // _this.imageData =  resizeImg(imgData);
+          //localStorage.setItem('thumbnail', imgData);
+        };
+        reader.readAsDataURL(file);
+      }
+    </script>
+    <!-- <main>
       <div>
         <div>アイコン</div>
         <input type="file" name="file" />
@@ -43,6 +72,6 @@
         <div>スポーツマン</div>
       </div>
       <a href="./map.html">Add Characters</a>
-    </main>
+    </main> -->
   </body>
 </html>

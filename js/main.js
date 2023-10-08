@@ -39,7 +39,7 @@ const main = async function () {
   window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
-  let map = L.map("mapid");
+  let map = L.map("mapid", { zoomControl: false });
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
@@ -54,14 +54,14 @@ const main = async function () {
   map.setView([defaultLatlng.lat, defaultLatlng.lng], defaultZoomLevel);
 
   // 地図上の操作イベントハンドラ
-  map.on("keypress", async function (e) {
-    if (e.originalEvent.key == "1") {
-      addPlayer();           
-      // if (osmAPIAbortController) {
-      //   osmAPIAbortController.abort();
-      // }
-    }
-  });
+  // map.on("keypress", async function (e) {
+  //   if (e.originalEvent.key == "1") {
+  //     addPlayer();           
+  //     // if (osmAPIAbortController) {
+  //     //   osmAPIAbortController.abort();
+  //     // }
+  //   }
+  // });
 
   let zoomLevelStart = map.getZoom();
   let zoomLevelEnd = map.getZoom();
@@ -84,8 +84,8 @@ const main = async function () {
   });
 
   // GUI
-  let gui = new GuiAddPlayer(L);
-  gui.show(L, map, "");  
+  //let gui = new GuiAddPlayer(L);
+  //gui.show(L, map, "");  
 
   /**
    * 地図上にコンテンツを表示する関数
@@ -517,7 +517,8 @@ const main = async function () {
    * プレイヤー追加API
    */
   function addPlayer() {
-    let iconImage = gui.getImageData();
+    // let iconImage = gui.getImageData();
+    let iconImage = localStorage.getItem('thumbnail');
 
     const name = 'Player';
     let playerInfo = {
