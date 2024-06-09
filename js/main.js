@@ -28,7 +28,7 @@ const main = async function () {
   let talkContents = {};
   let npcObjects = null;
   let centerLatlng = null;
-  const queryRadius = 0.5;
+  const queryRadius = 0.1; //0.5;
   let rectLatLng = null;
   let graph = null;
   let graphNodeInfoArray = null;
@@ -40,6 +40,7 @@ const main = async function () {
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
   let map = L.map("mapid", { zoomControl: false });
+  map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {

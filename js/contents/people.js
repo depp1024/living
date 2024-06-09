@@ -135,6 +135,8 @@ export class People {
     this.talkedPeopleIDList = new Array();
 
     this.waitForSlideEnd = (peopleInstance, marker, nodes) =>
+      console.log("[waitForSlideEnd]" + peopleInstance.peopleID);
+
       new Promise((resolve) => {
         // 移動ノードが１つもない場合は移動させない
         if (nodes.length == 0) {
@@ -161,19 +163,35 @@ export class People {
             keepAtCenter: false,
           })
           .on("moveend", async function () {
-            const closedPeople = People.getClosedPeople(peopleInstance, 100);
-            if (closedPeople.length > 0) {
-              peopleInstance.isTalking = true;
-              peopleInstance.talkingOrder = 0;
-              peopleInstance.talkedPeopleList.push(closedPeople[0]);
-              peopleInstance.talkedPeopleIDList.push(closedPeople[0].peopleID);
-              closedPeople[0].isTalking = true;
-              closedPeople[0].talkingOrder = 1;
-              closedPeople[0].talkedPeopleList.push(peopleInstance);
-              closedPeople[0].talkedPeopleIDList.push(peopleInstance.peopleID);
+            if (peopleInstance.isTalking == false) {
+              const closedPeople = People.getClosedPeople(peopleInstance, 100);
+              if (closedPeople.length > 0) {
+                console.log(
+                  "moveend peopleID : " +
+                    +peopleInstance.peopleID +
+                    "," +
+                    peopleInstance.nickname
+                );
+                console.log("closed people length : " + closedPeople.length);
+
+                peopleInstance.isTalking = true;
+                peopleInstance.talkingOrder = 0;
+                peopleInstance.talkedPeopleList.push(closedPeople[0]);
+                peopleInstance.talkedPeopleIDList.push(
+                  closedPeople[0].peopleID
+                );
+                closedPeople[0].isTalking = true;
+                closedPeople[0].talkingOrder = 1;
+                closedPeople[0].talkedPeopleList.push(peopleInstance);
+                closedPeople[0].talkedPeopleIDList.push(
+                  peopleInstance.peopleID
+                );
+              }
             }
 
             if (peopleInstance.isTalking) {
+              console.log("*** " + peopleInstance.nickname);
+
               let nickname01 = "";
               let nickname02 = "";
               if (peopleInstance.talkingOrder == 0) {
@@ -195,7 +213,12 @@ export class People {
                   peopleInstance.talkContents[nickname01][nickname02];
 
                 console.log(
-                  peopleInstance.nickname + "," + peopleInstance.talkingOrder
+                  "[Start Talking] " +
+                    peopleInstance.peopleID +
+                    "," +
+                    peopleInstance.nickname +
+                    "," +
+                    peopleInstance.talkingOrder
                 );
 
                 peopleInstance.marker.bounce(2);
@@ -206,16 +229,37 @@ export class People {
                 for (let i = 0; i < talkArray.length; i++) {
                   if (talkArray[i].includes(peopleInstance.nickname)) {
                     let tagID = "peopleID" + peopleInstance.peopleID;
-                    peopleInstance.marker.bindPopup("<span id=\"" + tagID + "\"/>" + talkArray[i], {
-                      autoClose: true,
-                    });
+                    peopleInstance.marker.bindPopup(
+                      '<span id="' + tagID + '"/>' + talkArray[i],
+                      {
+                        autoClose: true,
+                      }
+                    );
                     peopleInstance.marker.openPopup();
 
                     let spanTag = $("#" + tagID);
-                    let contentWrapper = spanTag.parent().parent().parent().find(".leaflet-popup-content-wrapper");
-                    let tip = spanTag.parent().parent().parent().find(".leaflet-popup-tip");
+                    let contentWrapper = spanTag
+                      .parent()
+                      .parent()
+                      .parent()
+                      .find(".leaflet-popup-content-wrapper");
+                    let tip = spanTag
+                      .parent()
+                      .parent()
+                      .parent()
+                      .find(".leaflet-popup-tip");
                     contentWrapper.css("border-color", peopleInstance.color);
                     tip.css("border-color", peopleInstance.color);
+                    console.log(
+                      "Color tagID " +
+                        tagID +
+                        " " +
+                        peopleInstance.color +
+                        " " +
+                        peopleInstance.peopleID +
+                        "," +
+                        peopleInstance.nickname
+                    );
                   }
                   await People.wait(talkingTime);
                   peopleInstance.marker.closePopup();
@@ -264,6 +308,7 @@ export class People {
    * @memberof People
    */
   async run(plotArray) {
+    console.log("[run]" + this.peopleID);
     const indexStart = Math.round(
       UtilsMath.randomRange(0, plotArray.length - 1)
     );
@@ -304,11 +349,14 @@ export class People {
     ) {
       this.logMovement();
       this.setPlayerRoute(this.startPlotPoint, this.goalPlotPoint);
+      console.log("[slideToAsync] start " + " peopleID " + this.peopleID + " index "+ i);
       await this.slideToAsync(
         this.marker,
         this.routeLatlngArray,
         this.routeNodeInfoArray
       );
+      console.log("[slideToAsync] end " + " peopleID " + this.peopleID + " index "+ i);
+
       this.routingPatternIndex =
         (this.routingPatternIndex + 1) % this.routingPatternArray.length;
       this.startPlotPoint = this.goalPlotPoint;
@@ -537,6 +585,7 @@ export class People {
    * @memberof People
    */
   async slideToAsync(marker, nodes) {
+    console.log("[slideToAsync] call function. peopleID " + this.peopleID);
     await this.waitForSlideEnd(this, marker, nodes);
   }
 

@@ -1,0 +1,28 @@
+#mapid {
+  /* width: 500px; */
+  height: 1000px;
+}
+
+.custom-panel {
+  background-color: white;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  border-width: 2px;
+  border-style: solid;
+}
+
+.leaflet-popup-close-button {
+  display: none;
+}
+
+.leaflet-popup-tip-container {
+  margin-top: -2px;
+  height: 23px;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  border-color: #6ea3e1;
+}

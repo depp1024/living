@@ -1,0 +1,70 @@
+@charset "UTF-8";
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  overflow: hidden;
+}
+
+#video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  z-index: 1;
+}
+
+.title img {
+  width: 928.73px; /* タイトル画像の幅 */
+  height: auto; /* 高さを自動調整してアスペクト比を維持 */
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  margin-top: 35px; /* はじめるボタンからの相対的な距離 */
+  font-family: "Meiryo UI";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+  color: #fd868c;
+  -webkit-text-stroke: 1px #ffffff; /* テキストの白色ストローク */
+}
+
+.button {
+  display: inline-block; /* inlineではなくinline-blockを使用 */
+  width: 232px;
+  height: 57px;
+  background-color: #fd868c;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 32px;
+  font-family: "KodomoRounded", Arial, sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #ffa0a7;
+}
+
+.button:active {
+  background-color: #d45d67;
+}
