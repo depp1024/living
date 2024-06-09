@@ -133,160 +133,6 @@ export class People {
     this.talkingOrder = -1;
     this.talkedPeopleList = new Array();
     this.talkedPeopleIDList = new Array();
-
-    this.waitForSlideEnd = (peopleInstance, marker, nodes) =>
-      console.log("[waitForSlideEnd]" + peopleInstance.peopleID);
-
-      new Promise((resolve) => {
-        // 移動ノードが１つもない場合は移動させない
-        if (nodes.length == 0) {
-          resolve();
-        }
-
-        const speed = this.speed;
-        let nodeIndex = 0;
-        const duration = (speed, srcLatLng, destLatLng) => {
-          const distance = this.map.distance(srcLatLng, destLatLng);
-          return distance / speed;
-        };
-
-        let nextDurationTime = duration(
-          speed,
-          marker.getLatLng(),
-          nodes[nodeIndex]
-        );
-        nextDurationTime = nextDurationTime != 0 ? nextDurationTime : 100;
-
-        marker
-          .slideTo(nodes[nodeIndex], {
-            duration: nextDurationTime,
-            keepAtCenter: false,
-          })
-          .on("moveend", async function () {
-            if (peopleInstance.isTalking == false) {
-              const closedPeople = People.getClosedPeople(peopleInstance, 100);
-              if (closedPeople.length > 0) {
-                console.log(
-                  "moveend peopleID : " +
-                    +peopleInstance.peopleID +
-                    "," +
-                    peopleInstance.nickname
-                );
-                console.log("closed people length : " + closedPeople.length);
-
-                peopleInstance.isTalking = true;
-                peopleInstance.talkingOrder = 0;
-                peopleInstance.talkedPeopleList.push(closedPeople[0]);
-                peopleInstance.talkedPeopleIDList.push(
-                  closedPeople[0].peopleID
-                );
-                closedPeople[0].isTalking = true;
-                closedPeople[0].talkingOrder = 1;
-                closedPeople[0].talkedPeopleList.push(peopleInstance);
-                closedPeople[0].talkedPeopleIDList.push(
-                  peopleInstance.peopleID
-                );
-              }
-            }
-
-            if (peopleInstance.isTalking) {
-              console.log("*** " + peopleInstance.nickname);
-
-              let nickname01 = "";
-              let nickname02 = "";
-              if (peopleInstance.talkingOrder == 0) {
-                nickname01 = peopleInstance.nickname;
-                nickname02 =
-                  peopleInstance.talkedPeopleList[
-                    peopleInstance.talkedPeopleList.length - 1
-                  ].nickname;
-              } else {
-                nickname01 =
-                  peopleInstance.talkedPeopleList[
-                    peopleInstance.talkedPeopleList.length - 1
-                  ].nickname;
-                nickname02 = peopleInstance.nickname;
-              }
-
-              try {
-                const talkArray =
-                  peopleInstance.talkContents[nickname01][nickname02];
-
-                console.log(
-                  "[Start Talking] " +
-                    peopleInstance.peopleID +
-                    "," +
-                    peopleInstance.nickname +
-                    "," +
-                    peopleInstance.talkingOrder
-                );
-
-                peopleInstance.marker.bounce(2);
-                await People.wait(2000);
-
-                const talkingTime = 5000;
-
-                for (let i = 0; i < talkArray.length; i++) {
-                  if (talkArray[i].includes(peopleInstance.nickname)) {
-                    let tagID = "peopleID" + peopleInstance.peopleID;
-                    peopleInstance.marker.bindPopup(
-                      '<span id="' + tagID + '"/>' + talkArray[i],
-                      {
-                        autoClose: true,
-                      }
-                    );
-                    peopleInstance.marker.openPopup();
-
-                    let spanTag = $("#" + tagID);
-                    let contentWrapper = spanTag
-                      .parent()
-                      .parent()
-                      .parent()
-                      .find(".leaflet-popup-content-wrapper");
-                    let tip = spanTag
-                      .parent()
-                      .parent()
-                      .parent()
-                      .find(".leaflet-popup-tip");
-                    contentWrapper.css("border-color", peopleInstance.color);
-                    tip.css("border-color", peopleInstance.color);
-                    console.log(
-                      "Color tagID " +
-                        tagID +
-                        " " +
-                        peopleInstance.color +
-                        " " +
-                        peopleInstance.peopleID +
-                        "," +
-                        peopleInstance.nickname
-                    );
-                  }
-                  await People.wait(talkingTime);
-                  peopleInstance.marker.closePopup();
-                }
-              } catch (e) {}
-
-              peopleInstance.isTalking = false;
-              peopleInstance.talkingOrder = -1;
-            }
-
-            nodeIndex++;
-            if (nodes.length <= nodeIndex) {
-              resolve();
-            } else {
-              nextDurationTime = duration(
-                speed,
-                marker.getLatLng(),
-                nodes[nodeIndex]
-              );
-              nextDurationTime = nextDurationTime != 0 ? nextDurationTime : 100;
-              marker.slideTo(nodes[nodeIndex], {
-                duration: nextDurationTime,
-                keepAtCenter: false,
-              });
-            }
-          });
-      });
   }
 
   /**
@@ -349,13 +195,11 @@ export class People {
     ) {
       this.logMovement();
       this.setPlayerRoute(this.startPlotPoint, this.goalPlotPoint);
-      console.log("[slideToAsync] start " + " peopleID " + this.peopleID + " index "+ i);
       await this.slideToAsync(
         this.marker,
         this.routeLatlngArray,
         this.routeNodeInfoArray
       );
-      console.log("[slideToAsync] end " + " peopleID " + this.peopleID + " index "+ i);
 
       this.routingPatternIndex =
         (this.routingPatternIndex + 1) % this.routingPatternArray.length;
@@ -585,8 +429,176 @@ export class People {
    * @memberof People
    */
   async slideToAsync(marker, nodes) {
-    console.log("[slideToAsync] call function. peopleID " + this.peopleID);
-    await this.waitForSlideEnd(this, marker, nodes);
+    // console.log("[slideToAsync] call function. peopleID " + this.peopleID);
+
+    if (nodes.length == 0) {
+      return; // 移動ノードが１つもない場合は即座に終了
+    }
+
+    const speed = this.speed;
+    let nodeIndex = 0;
+
+    /**
+     * 2つの座標間の距離と速度から移動にかかる時間を計算する関数
+     *
+     * @param {number} speed - 移動速度
+     * @param {Object} srcLatLng - 出発地点の座標
+     * @param {Object} destLatLng - 到着地点の座標
+     * @returns {number} - 移動にかかる時間
+     */
+    const duration = (speed, srcLatLng, destLatLng) => {
+      const distance = this.map.distance(srcLatLng, destLatLng);
+      return distance / speed;
+    };
+
+    /**
+     * 次のノードにスライドする関数
+     *
+     * @returns {Promise} - 移動完了を表すPromise
+     */
+    const slideToNextNode = async () => {
+      if (nodeIndex >= nodes.length) {
+        return; // すべてのノードに到達したら終了
+      }
+
+      const nextDurationTime =
+        duration(speed, marker.getLatLng(), nodes[nodeIndex]) || 100;
+
+      return new Promise((resolve) => {
+        marker
+          .slideTo(nodes[nodeIndex], {
+            duration: nextDurationTime,
+            keepAtCenter: false,
+          })
+          .once("moveend", async () => {
+            await this.handleMoveEnd(marker);
+            nodeIndex++;
+            resolve();
+          });
+      });
+    };
+
+    // 全てのノードを順にスライド
+    while (nodeIndex < nodes.length) {
+      await slideToNextNode();
+    }
+  }
+
+  /**
+   * マーカーが移動終了したときの処理を行う関数
+   *
+   * @param {Object} marker - 移動したマーカーオブジェクト
+   * @memberof People
+   */
+  async handleMoveEnd(marker) {
+    if (!this.isTalking) {
+      const closedPeople = People.getClosedPeople(this, 100);
+      if (closedPeople.length > 0) {
+        this.startTalking(closedPeople[0]);
+      }
+    }
+
+    if (this.isTalking) {
+      await this.talk();
+    }
+  }
+
+  /**
+   * 会話を開始するための初期設定を行う関数
+   *
+   * @param {Object} otherPerson - 会話の相手となる人物オブジェクト
+   * @memberof People
+   */
+  startTalking(otherPerson) {
+    console.log("moveend peopleID : " + this.peopleID + "," + this.nickname);
+    console.log(
+      "closed people length : " + People.getClosedPeople(this, 100).length
+    );
+
+    this.isTalking = true;
+    this.talkingOrder = 0;
+    this.talkedPeopleList.push(otherPerson);
+    this.talkedPeopleIDList.push(otherPerson.peopleID);
+    otherPerson.isTalking = true;
+    otherPerson.talkingOrder = 1;
+    otherPerson.talkedPeopleList.push(this);
+    otherPerson.talkedPeopleIDList.push(this.peopleID);
+  }
+
+  /**
+   * 会話をシミュレートする関数
+   *
+   * @memberof People
+   */
+  async talk() {
+    console.log("*** " + this.nickname);
+
+    let nickname01 = this.nickname;
+    let nickname02 =
+      this.talkedPeopleList[this.talkedPeopleList.length - 1].nickname;
+
+    if (this.talkingOrder != 0) {
+      [nickname01, nickname02] = [nickname02, nickname01];
+    }
+
+    try {
+      const talkArray = this.talkContents[nickname01][nickname02];
+
+      console.log(
+        "[Start Talking] " +
+          this.peopleID +
+          "," +
+          this.nickname +
+          "," +
+          this.talkingOrder
+      );
+
+      this.marker.bounce(2);
+      await People.wait(2000);
+
+      const talkingTime = 5000;
+
+      for (let i = 0; i < talkArray.length; i++) {
+        if (talkArray[i].includes(this.nickname)) {
+          let tagID = "peopleID" + this.peopleID;
+          this.marker.bindPopup('<span id="' + tagID + '"/>' + talkArray[i], {
+            autoClose: true,
+          });
+          this.marker.openPopup();
+
+          let spanTag = $("#" + tagID);
+          let contentWrapper = spanTag
+            .parent()
+            .parent()
+            .parent()
+            .find(".leaflet-popup-content-wrapper");
+          let tip = spanTag
+            .parent()
+            .parent()
+            .parent()
+            .find(".leaflet-popup-tip");
+          contentWrapper.css("border-color", this.color);
+          tip.css("border-color", this.color);
+          // console.log(
+          //   "Color tagID " +
+          //     tagID +
+          //     " " +
+          //     this.color +
+          //     " " +
+          //     this.peopleID +
+          //     "," +
+          //     this.nickname
+          // );
+        }
+        await People.wait(talkingTime);
+        this.marker.closePopup();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    this.isTalking = false;
+    this.talkingOrder = -1;
   }
 
   /**
