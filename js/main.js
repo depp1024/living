@@ -568,7 +568,7 @@ const main = async function () {
  */
 async function readTalkData() {
   let csv = new XMLHttpRequest();
-  csv.open("GET", "../data/talk.csv", false);
+  csv.open("GET", "../data/character_conversations.csv", false);
   csv.send(null);
   return UtilsCSV.convertCSVtoArray(csv.responseText);
 }
