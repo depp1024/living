@@ -28,7 +28,7 @@ const main = async function () {
   let talkContents = {};
   let npcObjects = null;
   let centerLatlng = null;
-  const queryRadius = 0.1; //0.5;
+  const queryRadius = 0.5;
   let rectLatLng = null;
   let graph = null;
   let graphNodeInfoArray = null;
@@ -497,7 +497,11 @@ const main = async function () {
    */
   async function readNPCData() {
     // read npc data
-    const npcArray = await GASApi.getNPCData();
+    let csv = new XMLHttpRequest();
+    csv.open("GET", "../data/npc_name.csv", false);
+    csv.send(null);
+    const npcArray = UtilsCSV.convertCSVtoArray(csv.responseText);
+
     let itemList = npcArray.shift();
     itemList = itemList[0].split(",");
     const npcObjects = npcArray.reduce((result, item, index) => {

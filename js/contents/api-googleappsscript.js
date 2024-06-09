@@ -9,36 +9,6 @@ import { UtilsCSV } from "../utils/utils-csv.js";
  */
 export class GASApi {
   /**
-   * Googleドライブのスプレッドシートに保存されているNPC情報を呼び出すAPI
-   *
-   * @static
-   * @return {Array} id, name, icon url, selfinttoduction
-   * @memberof GASApi
-   */
-  static async getNPCData() {
-    const gasNPCURL =
-      "https://script.google.com/macros/s/AKfycbxudXXR-7h0_NSrV9H_JnnYnNJwaqh2J8pK3u4y5Q0wy33vTvwD8To7SNLCn3F2IHRH/exec";
-
-    return await fetch(gasNPCURL)
-      .then((response) => {
-        if (response.status === 200) {
-          return response.text();
-        } else {
-          throw response;
-        }
-      })
-      .then((data) => {
-        try {
-          let infoList = UtilsCSV.convertCSVtoArray(data);
-          return infoList;
-        } catch (e) {
-          throw e;
-        }
-      })
-      .catch(console.error);
-  }
-
-  /**
    * ユーザのセーブデータを取得するAPI
    * 将来的にユーザもキャラクタを追加する時用のAPI
    * 使い方：await getPlayerData({lat1:'35', lng1:'40', lat2:'130', lng2:'140'});
