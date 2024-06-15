@@ -562,7 +562,7 @@ export class People {
         if (talkArray[i].includes(this.nickname)) {
           let tagID = "peopleID" + this.peopleID;
           this.marker.bindPopup('<span id="' + tagID + '"/>' + talkArray[i], {
-            autoClose: true,
+            autoClose: false,
           });
           this.marker.openPopup();
 
