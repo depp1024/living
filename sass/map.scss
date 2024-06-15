@@ -19,10 +19,14 @@
 
 .leaflet-popup-tip-container {
   margin-top: -2px;
-  height: 23px;
 }
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   border-color: #6ea3e1;
+}
+
+.leaflet-popup-tip {
+  margin: -11px auto 0;
+  box-shadow: none;
 }
