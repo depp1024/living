@@ -561,8 +561,13 @@ export class People {
       for (let i = 0; i < talkArray.length; i++) {
         if (talkArray[i].includes(this.nickname)) {
           let tagID = "peopleID" + this.peopleID;
-          this.marker.bindPopup('<span id="' + tagID + '"/>' + talkArray[i], {
+
+          // キャラクター名を除去してセリフだけを取り出す
+          let talkContent = talkArray[i].replace(/\[.*?\]\s*/, "");
+
+          this.marker.bindPopup('<span id="' + tagID + '"/>' + talkContent, {
             autoClose: false,
+            className: "character-popup",
           });
           this.marker.openPopup();
 
@@ -577,19 +582,22 @@ export class People {
             .parent()
             .parent()
             .find(".leaflet-popup-tip");
-          contentWrapper.css("border-color", this.color);
-          tip.css("border-color", this.color);
-          // console.log(
-          //   "Color tagID " +
-          //     tagID +
-          //     " " +
-          //     this.color +
-          //     " " +
-          //     this.peopleID +
-          //     "," +
-          //     this.nickname
-          // );
+
+          // キャラクター名を設定
+          contentWrapper.attr("data-character-name", this.nickname);
+          contentWrapper.css("--character-color", this.color);
+
+          // 色の設定
+          contentWrapper.css({
+            "border-color": this.color,
+            "background-color": "white",
+          });
+          tip.css({
+            "border-color": this.color,
+            "background-color": "white",
+          });
         }
+
         await People.wait(talkingTime);
         this.marker.closePopup();
       }

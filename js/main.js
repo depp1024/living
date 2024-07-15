@@ -57,7 +57,7 @@ const main = async function () {
   // 地図上の操作イベントハンドラ
   // map.on("keypress", async function (e) {
   //   if (e.originalEvent.key == "1") {
-  //     addPlayer();           
+  //     addPlayer();
   //     // if (osmAPIAbortController) {
   //     //   osmAPIAbortController.abort();
   //     // }
@@ -86,7 +86,7 @@ const main = async function () {
 
   // GUI
   //let gui = new GuiAddPlayer(L);
-  //gui.show(L, map, "");  
+  //gui.show(L, map, "");
 
   /**
    * 地図上にコンテンツを表示する関数
@@ -113,10 +113,10 @@ const main = async function () {
 
   /**
    * 最短経路計算関数　Tree用
-   * @param {*} tree 
-   * @param {*} searchPosition 
-   * @param {*} counts 
-   * @returns 
+   * @param {*} tree
+   * @param {*} searchPosition
+   * @param {*} counts
+   * @returns
    */
   function getNearestFunction(tree, searchPosition, counts) {
     let nearest = tree.nearest(searchPosition, counts);
@@ -130,7 +130,7 @@ const main = async function () {
       }
     });
     return nearest;
-  }  
+  }
 
   /**
    * 地図上のコンテンツをセットアップする関数
@@ -341,10 +341,17 @@ const main = async function () {
     let talkContentList = await readTalkData();
     talkContentList.forEach(function (element, index, array) {
       var splitList = element[0].split(",");
-      var talkList = splitList[2]
-        .replaceAll("「", "：")
-        .split("」")
-        .filter(Boolean);
+
+      //var talkList = splitList[2].match(/「[^」]*」/g);
+      var regex = /([^\s「]+)「([^」]+)」/g;
+      var match;
+      var talkList = [];
+      var fontWeight = "bold"; // 100から900までの数値、または 'bold', 'normal' など
+      var fontSize = "1.0em";
+      while ((match = regex.exec(splitList[2])) !== null) {
+        talkList.push("[" + match[1] +"]" + match[2]);
+      }
+
       const key1 = splitList[0];
       const key2 = splitList[1];
       var obj = {};
@@ -423,7 +430,7 @@ const main = async function () {
       wayInfo = null;
       nodeInfoPlotTree = null;
       facilityTree = null;
-      
+
       peopleList = null;
     });
     areaContentList.length = 0;
@@ -523,21 +530,22 @@ const main = async function () {
    */
   function addPlayer() {
     // let iconImage = gui.getImageData();
-    let iconImage = localStorage.getItem('thumbnail');
+    let iconImage = localStorage.getItem("thumbnail");
 
-    const name = 'Player';
+    const name = "Player";
     let playerInfo = {
-      'a-little-word:en':'Workwash liquor',
-      'a-little-word:ja':'はしご酒中',
-      'icon':iconImage,
-      'id':'1',
-      'name:en':name,
-      'name:ja':name,
-      'nickname':'梯子酒のOL',
-      'routing-comment':'restaurant 飲んだ後はラーメンよね セットで1500円なんてハッピー|cafe BIGチョコレートパフェ！いぇい！|doctors 数値が心配… 健康診断怖い…|dentist 歯医者はいつ行かなくてよくなるんだろ|atm 飲み代こそっとおろそうっと|bank 飲み代こそっとおろそうっと',
-      'routing-pattern':'restaurant cafe|doctors dentist|atm bank',
-      'self-introduction:en':'I love alcohol',
-      'self-introduction:ja':'お酒大好き',  
+      "a-little-word:en": "Workwash liquor",
+      "a-little-word:ja": "はしご酒中",
+      icon: iconImage,
+      id: "1",
+      "name:en": name,
+      "name:ja": name,
+      nickname: "梯子酒のOL",
+      "routing-comment":
+        "restaurant 飲んだ後はラーメンよね セットで1500円なんてハッピー|cafe BIGチョコレートパフェ！いぇい！|doctors 数値が心配… 健康診断怖い…|dentist 歯医者はいつ行かなくてよくなるんだろ|atm 飲み代こそっとおろそうっと|bank 飲み代こそっとおろそうっと",
+      "routing-pattern": "restaurant cafe|doctors dentist|atm bank",
+      "self-introduction:en": "I love alcohol",
+      "self-introduction:ja": "お酒大好き",
     };
 
     let player = new People(
@@ -555,7 +563,7 @@ const main = async function () {
     player.run(plotArray);
     peopleList.push(player);
     peopleList.forEach((element) => element.setPlayerList(peopleList));
-  }  
+  }
 
   // utility function
   const delay = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));

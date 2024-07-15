@@ -1,3 +1,4 @@
+@charset "UTF-8";
 #mapid {
   /* width: 500px; */
   height: 1000px;
@@ -7,26 +8,55 @@
   background-color: white;
 }
 
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
+.leaflet-popup-content-wrapper {
+  position: relative;
+  background: white;
+  border-radius: 0;
   border-width: 2px;
   border-style: solid;
+  padding: 15px 12px;
+  margin-top: 25px;
+  display: flex; /* Flexboxを使用 */
+  align-items: center; /* 縦方向の中央揃え */
 }
 
-.leaflet-popup-close-button {
-  display: none;
+.leaflet-popup-content {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 14px;
+  min-height: 30px;
+  width: 100%; /* 幅を100%に設定 */
+  text-align: left; /* 左寄せ */
 }
 
 .leaflet-popup-tip-container {
   margin-top: -2px;
 }
 
-.leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  border-color: #6ea3e1;
+  width: 20px;
+  height: 20px;
+  margin: -10px auto 0;
+  transform: rotate(45deg);
+  border-width: 2px;
+  border-style: solid;
+  border-top: none;
+  border-left: none;
 }
 
-.leaflet-popup-tip {
-  margin: -11px auto 0;
-  box-shadow: none;
+/* キャラクター名用の疑似要素 */
+.leaflet-popup-content-wrapper::before {
+  content: attr(data-character-name);
+  background: var(--character-color);
+  color: white;
+  padding: 4px 10px;
+  position: absolute;
+  top: -25px;
+  left: -2px;
+  font-size: 14px;
+  font-weight: bold;
+  border-style: solid;
+  border-width: 2px;
+  border-bottom: none;
+  border-color: var(--character-color);
 }/*# sourceMappingURL=map.css.map */
