@@ -27,9 +27,9 @@ html {
   height: 100%;
   z-index: 2;
   pointer-events: none;
-  background-color: rgba(255, 253, 240, 0.2); /* 薄い黄色がかった色 */
+  background-color: rgb(255, 255, 255);
   mix-blend-mode: overlay;
-  filter: brightness(0.9) contrast(0.8) saturate(0.7) sepia(0.2) blur(0.5px);
+  filter: brightness(0.7);
 }
 
 .vignette-overlay {
@@ -63,11 +63,11 @@ html {
   margin-top: 35px; /* はじめるボタンからの相対的な距離 */
   font-family: "Meiryo UI";
   font-style: normal;
-  font-weight: 700;
+  font-weight: bold;
   font-size: 24px;
   line-height: 30px;
   color: #fd868c;
-  -webkit-text-stroke: 1px #ffffff; /* テキストの白色ストローク */
+  -webkit-text-stroke: 0.5px #ffffff; /* テキストの白色ストローク */
 }
 
 .button {

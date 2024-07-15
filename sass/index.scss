@@ -16,7 +16,7 @@ html {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   z-index: 1;
 }
 
@@ -28,16 +28,16 @@ html {
   height: 100%;
   z-index: 2;
   pointer-events: none;
-  
-  background-color: rgba(255, 253, 240, 0.2); /* 薄い黄色がかった色 */
+
+  background-color: rgba(255, 255, 255, 1.0);
+  // background-color: rgba(255, 253, 240, 1.0);
   mix-blend-mode: overlay;
-  
   filter: 
-    brightness(0.9) 
-    contrast(0.8) 
-    saturate(0.7) 
-    sepia(0.2) 
-    blur(0.5px);
+    brightness(0.7) /* 明るさ */ 
+    // contrast(0.9) /* コントラスト */
+    // saturate(0.8) /* 彩度 */ 
+    // sepia(0.1) /* セピア効果 */ 
+    // blur(0.5px); /* ぼかし効果 */
 }
 
 .vignette-overlay {
@@ -46,7 +46,11 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.7) 120%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.7) 120%
+  );
   pointer-events: none;
   z-index: 3; // videoとeffect-overlayの上、contentの下に配置
 }
@@ -71,11 +75,12 @@ html {
   margin-top: 35px; /* はじめるボタンからの相対的な距離 */
   font-family: "Meiryo UI";
   font-style: normal;
-  font-weight: 700;
+  // font-weight: 700;
+  font-weight: bold;
   font-size: 24px;
   line-height: 30px;
   color: #fd868c;
-  -webkit-text-stroke: 1px #ffffff; /* テキストの白色ストローク */
+  -webkit-text-stroke: 0.5px #ffffff; /* テキストの白色ストローク */
 }
 
 .button {
