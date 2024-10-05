@@ -29,15 +29,15 @@ html {
   z-index: 2;
   pointer-events: none;
 
-  background-color: rgba(255, 255, 255, 1.0);
+  background-color: rgba(255, 255, 255, 0.5);
   // background-color: rgba(255, 253, 240, 1.0);
-  mix-blend-mode: overlay;
-  filter: 
-    brightness(0.7) /* 明るさ */ 
-    // contrast(0.9) /* コントラスト */
-    // saturate(0.8) /* 彩度 */ 
-    // sepia(0.1) /* セピア効果 */ 
-    // blur(0.5px); /* ぼかし効果 */
+  // mix-blend-mode: overlay;
+  // filter: 
+  //   brightness(0.7) /* 明るさ */ 
+  //   // contrast(0.9) /* コントラスト */
+  //   // saturate(0.8) /* 彩度 */ 
+  //   // sepia(0.1) /* セピア効果 */ 
+  //   // blur(0.5px); /* ぼかし効果 */
 }
 
 .vignette-overlay {
