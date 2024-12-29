@@ -1,8 +1,37 @@
 id,name:ja,name:en,icon,color,nickname,self-introduction:ja,self-introduction:en,a-little-word:ja,a-little-word:en,routing-pattern,routing-comment
-1,lilian,lilian,img/npc/npc06.png,#E96117,結婚指輪を探してるOL,新婚,newlywed,結婚指輪行脚中,Wedding ring pilgrimage,cafe,cafe 指長効果でスッキリと長く魅せてくれる指輪がいいな ティファニーの店員さんにもヒアリングした！海外ではセットリングという概念がないらしい 結婚指輪欲しいーーー！
-2,yasutaka_work,yasutaka_work,img/npc/npc01.png,#6EA3E1,不倫中の音楽プロデューサー,音楽プロデューサー,Music producer,不倫旅行中,During an affair trip,nightclub bar,nightclub 今日はここに行こう|bar おすすめのお酒を出すよ 久々に会えたね
-3,taro.official,taro.official,img/npc/npc02.png,#EA6DB1,競馬好きなブロガー,Webブロガー,Web blogger,競馬の予想当たるといいな,I hope my horse racing predictions are correct.,restaurant bar,restaurant 次のレースは穴党にはもってこい 今年の2歳馬は強いな 1点買いで勝負！|bar 今年の負け分ここで取り返す 明日は絶対にこいつが来る 明日は重馬場だな…
-4,juju_,juju_,img/npc/npc05.png,#E8287B,銀行勤務のOL,銀行勤務,Bank job,彼氏が取り合ってくれない,My boyfriend won't deal with me,restaurant cafe|atm bank,restaurant 今週もデートに行けなかった。もう知らない！|cafe ここのBIGチョコレートパフェだけが私の支え…|atm 彼はあてにならないから私一人でも生きていけるようにしとかないと|bank 預金残高が少なくなってきたなぁ…
-5,y_ichiha,y_ichiha,img/npc/npc07.png,#EFD160,女子会好きの人事総務,人事総務,Human resources and general affairs,女子会ランチ行ってきます,I'm going to a girls' party for lunch.,restaurant cafe,restaurant 久々のランチ会♪雰囲気もすごく良くてお肉も美味しかったです！ 予約しなくて大丈夫かな？と思ってたら満席だった～ 美味しいご料理ご馳走様でした！|cafe みかんラテ目当てで行ったのにリサーチ不足できょうは飲めず… ふんわりミルクの中にりんごの果実が入っててめっちゃ美味しいラテだった～♪
-6,unekara,unekara,img/npc/npc04.png,#78BF5C,健康的なデザイナー,アプリデザイナー,app designer,夜8時には寝ます,I go to bed at 8pm,arts_centre restaurant,arts_centre 良いアウトプットは良いインプットから ただ見て、感じる|restaurant 飲食サービスのUXを改善していきたい
-7,v4uaweapij,v4uaweapij,img/npc/npc03.png,#FD868C,年金暮らしのおじいさん,年金暮らし,pension life,荷物重たい,My luggage is heavy,clinic dentist doctors hospital,clinic ここの先生わしの話聞いてくれたじゃろうか…|dentist 歯は大事じゃ しっかりと噛めることが大事じゃ|doctors 薬を一週間分もらったわい|hospital 薬手帳新規で作らされたわい
+1,lilian,lilian,img/npc/avataaars_結婚指輪を探してるOL.png,#E96117,結婚指輪を探してるOL,新婚,newlywed,結婚指輪行脚中,Wedding ring pilgrimage,restaurant,
+2,yasutaka_work,yasutaka_work,img/npc/avataaars_不倫中の音楽プロデューサー.png,#6EA3E1,不倫中の音楽プロデューサー,音楽プロデューサー,Music producer,不倫旅行中,During an affair trip,restaurant,
+3,taro.official,taro.official,img/npc/avataaars_競馬好きなブロガー.png,#EA6DB1,競馬好きなブロガー,Webブロガー,Web blogger,競馬の予想当たるといいな,I hope my horse racing predictions are correct.,restaurant,
+4,ladies_night,ladies_night,img/npc/avataaars_梯子酒のOL.png,#D7562B,梯子酒のOL,酒好きなOL,I love hopping from bar to bar.,I love bar hopping.,restaurant,
+5,first_love,first_love,img/npc/avataaars_片思い女子高生.png,#2A9D8F,片思い女子高生,青春な女子高生,I have a crush on someone.,I have a crush.,restaurant,
+6,saboten,saboten,img/npc/avataaars_さぼり癖のある営業職.png,#EA6DB1,さぼり癖のある営業職,怠け者の営業,I tend to slack off at work.,I often take breaks.,restaurant,
+7,busy_mom,busy_mom,img/npc/avataaars_忙しいお母さん.png,#F4A261,忙しいお母さん,多忙なママ,忙しい日々,I lead a busy life as a mom.,Being a mom is busy.,restaurant,
+8,retired_public,retired_public,img/npc/avataaars_定年する公務員.png,#F9C74F,定年する公務員,定年退職者,I am retiring soon from public service.,I will retire soon.,restaurant,
+9,idol_otaku,idol_otaku,img/npc/avataaars_アイドルオタク.png,#F3722C,アイドルオタク,アイドルファン,アイドルが大好き,I love idols.,I am an idol fan.,restaurant,
+10,bookworm,bookworm,img/npc/avataaars_読書家の小学生.png,#90BE6D,読書家の小学生,読書大好き,I love reading books.,I am a book lover.,restaurant,
+11,young_researcher,young_researcher,img/npc/avataaars_研究好きの小学生.png,#F94144,研究好きの小学生,研究好き,I love researching new things.,I am curious about everything.,restaurant,
+12,bank_office,bank_office,img/npc/avataaars_銀行勤務のOL.png,#264653,銀行勤務のOL,銀行OL,銀行で働いています,I work at a bank.,I work in a bank.,restaurant,
+13,promo_lover,promo_lover,img/npc/avataaars_プロモーション好きのOL.png,#E9C46A,プロモーション好きのOL,プロモーション好き,I love promotions.,I enjoy promotions.,restaurant,
+14,solo_life,solo_life,img/npc/avataaars_一人が嬉しい専業主婦.png,#6EA3E1,一人が嬉しい専業主婦,専業主婦,一人の時間が好き,I enjoy my alone time.,I love being alone.,restaurant,
+15,girls_gathering,girls_gathering,img/npc/avataaars_女子会好きの人事総務.png,#D7562B,女子会好きの人事総務,女子会好き,I love girls' gatherings.,I enjoy girls' night out.,restaurant,
+16,youtuber,youtuber,img/npc/avataaars_ネタに飢えてるYouTuber.png,#F4A261,ネタに飢えてるYouTuber,YouTuber,新しいネタを探している,I am always looking for new content.,I need new content.,restaurant,
+17,healthy_designer,healthy_designer,img/npc/avataaars_健康的なデザイナー.png,#F9C74F,健康的なデザイナー,健康志向のデザイナー,I prioritize health in my life.,Health is my priority.,restaurant,
+18,grandpa,grandpa,img/npc/avataaars_年金暮らしのおじいさん.png,#F3722C,年金暮らしのおじいさん,年金生活者,I live on pension.,I live on my pension.,restaurant,
+19,chef,chef,img/npc/avataaars_特売日が大事なシェフ.png,#90BE6D,特売日が大事なシェフ,特売日が大好き,I love sales days.,Sales days are important to me.,restaurant,
+20,teacher,teacher,img/npc/avataaars_小学校の先生.png,#2A9D8F,小学校の先生,教師,教えるのが好き,I love teaching.,I enjoy teaching.,restaurant,
+21,nursery_kid,nursery_kid,img/npc/avataaars_鼻水たれてる幼稚園児.png,#EA6DB1,鼻水たれてる幼稚園児,幼稚園児,毎日楽しい,I have fun every day.,Every day is fun.,restaurant,
+22,license_holder,license_holder,img/npc/avataaars_免許証準備中のカフェ常連.png,#F94144,免許証準備中のカフェ常連,カフェ好き,I love cafes.,I am a cafe lover.,restaurant,
+23,grandpa_horse,grandpa_horse,img/npc/avataaars_競馬予想のおじいちゃん.png,#F4A261,競馬予想のおじいちゃん,競馬好き,I love horse racing.,I enjoy horse racing.,restaurant,
+24,traffic_guard,traffic_guard,img/npc/avataaars_歩行者天国の番人.png,#F9C74F,歩行者天国の番人,交通警備,I guard the pedestrian zone.,I watch over the pedestrian zone.,restaurant,
+25,amazon_addict,amazon_addict,img/npc/avataaars_Amazon依存の不良.png,#F3722C,Amazon依存の不良,不良,I am addicted to Amazon.,I can't stop using Amazon.,restaurant,
+26,taichi_lover,taichi_lover,img/npc/avataaars_健康第一の太極拳愛好者.png,#90BE6D,健康第一の太極拳愛好者,太極拳愛好者,I prioritize health above all.,Health comes first.,restaurant,
+27,yakyu_dad,yakyu_dad,img/npc/avataaars_野球教室の親父.png,#E96117,野球教室の親父,野球好き,I love baseball.,I enjoy teaching baseball.,restaurant,
+28,pitch_talk,pitch_talk,img/npc/avataaars_ピッチャー談義の達人.png,#6EA3E1,ピッチャー談義の達人,ピッチャー,I love talking about pitchers.,Pitchers are my passion.,restaurant,
+29,cut_master,cut_master,img/npc/avataaars_1000円カットの伝道師.png,#D7562B,1,000円カットの伝道師,カットの達人,I am a master of haircuts.,I specialize in haircuts.,restaurant,
+30,math_grandpa,math_grandpa,img/npc/avataaars_数学好きのおじいさん.png,#EA6DB1,数学好きのおじいさん,数学マスター,I love math.,Math is my favorite.,restaurant,
+31,transport_avoider,transport_avoider,img/npc/avataaars_運搬予定ゼロの運送業者.png,#F94144,運搬予定ゼロの運送業者,運送業者,運搬予定がない,No transport scheduled.,restaurant,
+32,sushi_priority,sushi_priority,img/npc/avataaars_子供より寿司優先の父.png,#F4A261,子供より寿司優先の父,寿司好き,I prefer sushi over my kids.,Sushi comes first.,restaurant,
+33,dog_mama,dog_mama,img/npc/avataaars_犬好きのヤンキーママ.png,#F9C74F,犬好きのヤンキーママ,ヤンキーママ,I love dogs.,I am a dog lover.,restaurant,
+34,rail_fan,rail_fan,img/npc/avataaars_鉄道音響マニア.png,#2A9D8F,鉄道音響マニア,鉄道音響ファン,鉄道音響が好き,I love railway sounds.,restaurant,
+35,cosplay_kid,cosplay_kid,img/npc/avataaars_コスプレ幼稚園児.png,#EA6DB1,コスプレ幼稚園児,コスプレ好き,I love cosplay.,I enjoy dressing up.,restaurant,
+36,electric_bike_girl,electric_bike_girl,img/npc/avataaars_電動自転車ぶっとばしヤクルトガール.png,#F4A261,電動自転車ぶっとばしヤクルトガール,ヤクルトガール,電動自転車が好き,I love my electric bike.,I enjoy riding my electric bike.,restaurant,
