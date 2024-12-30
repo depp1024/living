@@ -15,17 +15,16 @@
   border-style: solid;
   padding: 15px 12px;
   margin-top: 25px;
-  display: flex;  /* Flexboxを使用 */
-  align-items: center;  /* 縦方向の中央揃え */
+  display: inline-block; /* コンテンツの幅に応じて自動調整 */
+  max-width: 400px; /* 必要に応じて最大幅を設定 */
+  word-wrap: break-word; /* 長い単語を改行 */
 }
 
 .leaflet-popup-content {
   margin: 0;
   font-family: sans-serif;
   font-size: 14px;
-  min-height: 30px;
-  width: 100%;  /* 幅を100%に設定 */
-  text-align: left;  /* 左寄せ */
+  text-align: left;
 }
 
 .leaflet-popup-tip-container {
@@ -54,10 +53,14 @@
   left: -2px;
   font-size: 14px;
   font-weight: bold;
-  border-style: solid;
-  border-width: 2px;
-  border-bottom: none;
-  border-color: var(--character-color);
+  white-space: nowrap; /* ニックネームを1行に固定 */
+  overflow: hidden; /* 長すぎる場合にオーバーフローを隠す */
+  text-overflow: ellipsis; /* 必要に応じて省略記号を追加 */
+  display: inline-block; /* ニックネームが1行で表示されるように設定 */
+}
+
+.leaflet-popup-content-wrapper .leaflet-popup-content {
+  display: inline-block; /* セリフが1行の場合でも自動調整 */
 }
 
 /* キャラクターアイコンのスタイリング */
