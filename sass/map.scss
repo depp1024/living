@@ -59,3 +59,31 @@
   border-bottom: none;
   border-color: var(--character-color);
 }
+
+/* キャラクターアイコンのスタイリング */
+.leaflet-marker-icon {
+  border-radius: 50%; /* 完全な円形に */
+  border-style: none;
+}
+
+/* キャラクターアイコンのスタイリング */
+.character-icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid var(--character-color);
+  background: white;
+  padding: 0px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}

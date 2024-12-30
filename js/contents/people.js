@@ -166,9 +166,11 @@ export class People {
     );
 
     const url = this.iconURL != "" ? this.iconURL : "";
-    const iconSize = [50, 50];
-    const icon = this.L.icon({
-      iconUrl: url,
+    const iconSize = [75, 75];
+    const icon = this.L.divIcon({  // L.icon から L.divIcon に変更
+      html: `<div class="character-icon" style="--character-color: ${this.color};">
+               <img src="${url}" width="${iconSize[0]}" height="${iconSize[1]}">
+             </div>`,
       iconSize: iconSize,
       iconAnchor: [iconSize[0] * 0.5, iconSize[1]],
       popupAnchor: [0, -iconSize[1]],
@@ -178,6 +180,12 @@ export class People {
       riseOnHover: true,
       icon: icon,
     });
+    // マーカーにキャラクターの色を設定
+    const markerElement = this.marker.getElement();
+    if (markerElement) {
+      markerElement.style.setProperty("--character-color", this.color);
+    }
+
     this.marker.addTo(this.map);
 
     this.setNextGoalPlotPoint(
