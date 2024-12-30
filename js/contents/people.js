@@ -281,7 +281,7 @@ export class People {
         popupHistoryPlaceBorderLine +
         popupHistoryPlace +
         popupHistoryComment,
-      { autoClose: false }
+      { autoClose: false, autoPan: false }
     );
   }
 
@@ -575,6 +575,7 @@ export class People {
 
           this.marker.bindPopup('<span id="' + tagID + '"/>' + talkContent, {
             autoClose: false,
+            autoPan: false,
             className: "character-popup",
           });
           this.marker.openPopup();
