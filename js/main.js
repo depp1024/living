@@ -20,7 +20,8 @@ const main = async function () {
   // ブラウザから取得できる座標を優先
   // 取得できなかった場合は言語コードから国を推定しその首都に設定
   const defaultLatlng = await getDefaultLatlng();
-  const defaultZoomLevel = 17;
+  const defaultZoomLevel = 16;
+  const minZoomLevel = 15;
 
   // area content
   let areaContentList = Array();
@@ -28,7 +29,7 @@ const main = async function () {
   let talkContents = {};
   let npcObjects = null;
   let centerLatlng = null;
-  const queryRadius = 2.00;
+  const queryRadius = 2.0;
   let rectLatLng = null;
   let graph = null;
   let graphNodeInfoArray = null;
@@ -39,7 +40,7 @@ const main = async function () {
   window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
-  let map = L.map("mapid", { zoomControl: false });
+  let map = L.map("mapid", { zoomControl: false, minZoom: minZoomLevel });
   map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -349,7 +350,7 @@ const main = async function () {
       var fontWeight = "bold"; // 100から900までの数値、または 'bold', 'normal' など
       var fontSize = "1.0em";
       while ((match = regex.exec(splitList[2])) !== null) {
-        talkList.push("[" + match[1] +"]" + match[2]);
+        talkList.push("[" + match[1] + "]" + match[2]);
       }
 
       const key1 = splitList[0];
