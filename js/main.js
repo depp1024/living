@@ -47,6 +47,7 @@ const main = async function () {
     {
       attribution:
         '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        className: 'desaturated-map' // 新しいクラスを追加
     }
   );
   tileLayer.addTo(map);
