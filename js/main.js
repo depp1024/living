@@ -21,7 +21,6 @@ const main = async function () {
   // 取得できなかった場合は言語コードから国を推定しその首都に設定
   const defaultLatlng = await getDefaultLatlng();
   const defaultZoomLevel = 16;
-  const minZoomLevel = 15;
 
   // area content
   let areaContentList = Array();
@@ -40,7 +39,7 @@ const main = async function () {
   window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
-  let map = L.map("mapid", { zoomControl: false, minZoom: minZoomLevel });
+  let map = L.map("mapid", { zoomControl: false });
   map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
