@@ -98,3 +98,27 @@
 .desaturated-map {
   filter: saturate(0.7) brightness(1.05); /* 彩度を70%に、明るさを少し上げる */
 }
+
+.leaflet-control-locate .leaflet-control-locate-location-arrow{
+  margin: 12.5px !important;
+  width: 25px !important; /* 横幅 */
+  height: 25px !important; /* 高さ */
+  font-size: 24px !important; /* アイコンの文字サイズ */
+  line-height: 50px !important; /* アイコンを中央に配置 */
+}
+
+.leaflet-control-locate a {
+  width: 50px !important; /* 横幅 */
+  height: 50px !important; /* 高さ */
+  font-size: 24px !important; /* アイコンの文字サイズ */
+  line-height: 50px !important; /* アイコンを中央に配置 */
+  padding: 0 !important; /* 内側の余白を0にする */
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    width: 50px !important; /* 横幅 */
+    height: 50px !important; /* 高さ */
+    font-size: 32px !important; /* アイコンの文字サイズ */
+    line-height: 50px !important; /* アイコンを中央に配置 */
+}

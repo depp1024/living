@@ -39,8 +39,20 @@ const main = async function () {
   window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
-  let map = L.map("mapid", { zoomControl: false });
-  map.addControl(new L.Control.Fullscreen());
+  let map = L.map("mapid", { zoomControl: true });
+  // GUI
+  L.control.locate({
+    position: "topleft",  // 位置を指定
+    drawCircle: true,  // 現在地に円を描画
+    follow: true,  // 追従モード
+    setView: "once",
+    keepCurrentZoomLevel: false,
+    markerStyle: { color: "#2d89ef" },
+    circleStyle: { color: "#2d89ef", fillColor: "#2d89ef" },
+    strings: { title: "現在地を表示" }  // ホバー時のツールチップ
+  }).addTo(map);
+  
+  //map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
@@ -50,6 +62,7 @@ const main = async function () {
     }
   );
   tileLayer.addTo(map);
+
   map.on("load", async function () {
     await addAreaContent(map);
   });
@@ -84,10 +97,6 @@ const main = async function () {
       clearAreaContent();
     }
   });
-
-  // GUI
-  //let gui = new GuiAddPlayer(L);
-  //gui.show(L, map, "");
 
   /**
    * 地図上にコンテンツを表示する関数
