@@ -41,24 +41,26 @@ const main = async function () {
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
   let map = L.map("mapid", { zoomControl: true });
   // GUI
-  L.control.locate({
-    position: "topleft",  // 位置を指定
-    drawCircle: true,  // 現在地に円を描画
-    follow: true,  // 追従モード
-    setView: "once",
-    keepCurrentZoomLevel: false,
-    markerStyle: { color: "#2d89ef" },
-    circleStyle: { color: "#2d89ef", fillColor: "#2d89ef" },
-    strings: { title: "現在地を表示" }  // ホバー時のツールチップ
-  }).addTo(map);
-  
+  L.control
+    .locate({
+      position: "topleft", // 位置を指定
+      drawCircle: true, // 現在地に円を描画
+      follow: true, // 追従モード
+      setView: "once",
+      keepCurrentZoomLevel: false,
+      markerStyle: { color: "#2d89ef" },
+      circleStyle: { color: "#2d89ef", fillColor: "#2d89ef" },
+      strings: { title: "現在地を表示" }, // ホバー時のツールチップ
+    })
+    .addTo(map);
+
   //map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
         '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-        className: 'desaturated-map' // 新しいクラスを追加
+      className: "desaturated-map", // 新しいクラスを追加
     }
   );
   tileLayer.addTo(map);
@@ -585,8 +587,17 @@ const main = async function () {
  * @return {*}
  */
 async function readTalkData() {
+  function getBasePath() {
+    // GitHub Pages 環境かどうかを判定
+    if (location.hostname.includes("github.io")) {
+      return "/living/";
+    } else {
+      return "./";
+    }
+  }
+
   let csv = new XMLHttpRequest();
-  csv.open("GET", "../data/character_conversations.csv", false);
+  csv.open("GET", getBasePath() + "data/character_conversations.csv", false);
   csv.send(null);
   return UtilsCSV.convertCSVtoArray(csv.responseText);
 }
