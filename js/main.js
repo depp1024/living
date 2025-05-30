@@ -517,7 +517,7 @@ const main = async function () {
   async function readNPCData() {
     // read npc data
     let csv = new XMLHttpRequest();
-    csv.open("GET", "../data/npc_name.csv", false);
+    csv.open("GET", getBasePath() + "/data/npc_name.csv", false);
     csv.send(null);
     const npcArray = UtilsCSV.convertCSVtoArray(csv.responseText);
 
@@ -581,21 +581,21 @@ const main = async function () {
   const delay = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+function getBasePath() {
+  // GitHub Pages 環境かどうかを判定
+  if (location.hostname.includes("github.io")) {
+    return "/living/";
+  } else {
+    return "./";
+  }
+}
+
 /**
  * キャラクター会話データ読み込み
  *
  * @return {*}
  */
 async function readTalkData() {
-  function getBasePath() {
-    // GitHub Pages 環境かどうかを判定
-    if (location.hostname.includes("github.io")) {
-      return "/living/";
-    } else {
-      return "./";
-    }
-  }
-
   let csv = new XMLHttpRequest();
   csv.open("GET", getBasePath() + "data/character_conversations.csv", false);
   csv.send(null);

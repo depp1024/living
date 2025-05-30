@@ -154,7 +154,6 @@ export class People {
    * @memberof People
    */
   async run(plotArray) {
-    console.log("[run]" + this.peopleID);
     const indexStart = Math.round(
       UtilsMath.randomRange(0, plotArray.length - 1)
     );
@@ -518,11 +517,6 @@ export class People {
    * @memberof People
    */
   startTalking(otherPerson) {
-    console.log("moveend peopleID : " + this.peopleID + "," + this.nickname);
-    console.log(
-      "closed people length : " + People.getClosedPeople(this, 100).length
-    );
-
     this.isTalking = true;
     this.talkingOrder = 0;
     this.talkedPeopleList.push(otherPerson);
@@ -539,8 +533,6 @@ export class People {
    * @memberof People
    */
   async talk() {
-    console.log("*** " + this.nickname);
-
     let nickname01 = this.nickname;
     let nickname02 =
       this.talkedPeopleList[this.talkedPeopleList.length - 1].nickname;
@@ -551,16 +543,6 @@ export class People {
 
     try {
       const talkArray = this.talkContents[nickname01][nickname02];
-
-      console.log(
-        "[Start Talking] " +
-          this.peopleID +
-          "," +
-          this.nickname +
-          "," +
-          this.talkingOrder
-      );
-
       this.marker.bounce(2);
       await People.wait(2000);
 
