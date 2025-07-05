@@ -165,14 +165,18 @@ export class People {
     );
 
     const url = this.iconURL != "" ? this.iconURL : "";
-    const iconSize = [75, 75];
-    const icon = this.L.divIcon({  // L.icon から L.divIcon に変更
+    const isMobile = window.innerWidth <= 768; // スマホ判定
+    const iconSize = isMobile ? [60, 60] : [80, 80];
+    const iconAnchor = [iconSize[0] / 2, iconSize[1]];
+    const popupAnchor = [0, -iconSize[1]];
+
+    const icon = this.L.divIcon({
       html: `<div class="character-icon" style="--character-color: ${this.color};">
-               <img src="${url}" width="${iconSize[0]}" height="${iconSize[1]}">
-             </div>`,
+           <img src="${url}" width="${iconSize[0]}" height="${iconSize[1]}">
+         </div>`,
       iconSize: iconSize,
-      iconAnchor: [iconSize[0] * 0.5, iconSize[1]],
-      popupAnchor: [0, -iconSize[1]],
+      iconAnchor: iconAnchor,
+      popupAnchor: popupAnchor,
     });
     this.marker = this.L.marker(initialPeopleLatlng, {
       title: "Player",
