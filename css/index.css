@@ -46,15 +46,17 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  text-align: center; /* これが親要素の中央寄せに必要 */
   color: #fff;
   z-index: 4;
 }
 
+/* PCサイズ（ベース） */
 .title img {
-  width: 928.73px; /* タイトル画像の幅 */
-  height: auto; /* 高さを自動調整してアスペクト比を維持 */
-  margin-bottom: 20px;
+  width: 1000px; /* 少し大きく */
+  max-width: 90vw; /* 画面幅に収まるよう制限 */
+  height: auto;
+  margin-bottom: 10px; /* ボタンとの距離を縮める */
 }
 
 .subtitle {
@@ -69,7 +71,9 @@ html {
 }
 
 .button {
-  display: inline-block; /* inlineではなくinline-blockを使用 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 232px;
   height: 57px;
   background-color: #fd868c;
@@ -81,7 +85,8 @@ html {
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.3s ease;
-  margin-top: 115px;
+  margin: 40px auto 0 auto; /* ←中央寄せに重要！ */
+  text-align: center;
 }
 
 .button:hover {
@@ -90,4 +95,25 @@ html {
 
 .button:active {
   background-color: #d45d67;
+}
+
+/* スマホサイズ調整 */
+@media (max-width: 768px) {
+  .title img {
+    width: 85vw;
+    max-width: 480px;
+    margin-bottom: 6px;
+  }
+  .button {
+    width: 180px;
+    height: 48px;
+    font-size: 20px;
+    margin-top: 30px;
+  }
+  .subtitle {
+    font-size: 16px;
+    line-height: 22px;
+    margin-top: 20px;
+    padding: 0 16px;
+  }
 }/*# sourceMappingURL=index.css.map */
