@@ -48,8 +48,8 @@ html {
   height: 100%;
   background: radial-gradient(
     circle,
-    rgba(0, 0, 0, 0) 70%,
-    rgba(0, 0, 0, 0.7) 120%
+    rgba(160, 80, 0, 0) 70%,
+    rgba(160, 80, 0, 0.5) 120%
   );
   pointer-events: none;
   z-index: 3; // videoとeffect-overlayの上、contentの下に配置
