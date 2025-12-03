@@ -39,7 +39,7 @@ const main = async function () {
   window.addPlayer = addPlayer;
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
-  let map = L.map("mapid", { zoomControl: true });
+  let map = L.map("mapid", { zoomControl: false });
   // GUI
   L.control
     .locate({
@@ -54,7 +54,7 @@ const main = async function () {
     })
     .addTo(map);
 
-  //map.addControl(new L.Control.Fullscreen());
+  // map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
@@ -351,22 +351,32 @@ const main = async function () {
     // talk content
     talkContents = {};
     let talkContentList = await readTalkData();
-    talkContentList.forEach(function (element, index, array) {
-      var splitList = element[0].split(",");
 
-      //var talkList = splitList[2].match(/「[^」]*」/g);
-      var regex = /([^\s「]+)「([^」]+)」/g;
-      var match;
-      var talkList = [];
-      var fontWeight = "bold"; // 100から900までの数値、または 'bold', 'normal' など
-      var fontSize = "1.0em";
-      while ((match = regex.exec(splitList[2])) !== null) {
-        talkList.push("[" + match[1] + "]" + match[2]);
+    talkContentList.forEach(function (element, index, array) {
+      const line = element[0];
+
+      // 最初の2つのカンマで区切る（セリフ内カンマは無視）
+      const parts = line.split(/,(.*?,.*)/s);
+      const key1 = parts[0].trim();
+      const rest = parts[1] || "";
+      const parts2 = rest.split(/,(.*)/s);
+      const key2 = parts2[0].trim();
+      const dialogueText = (parts2[1] || "").trim();
+
+      // キャラ名: セリフ を順番に抽出
+      // 名前は英数字・空白・ハイフンを含む可能性あり
+      const regex = /([A-Za-z0-9\- ]+):\s*([^:]+?)(?=(?:[A-Za-z0-9\- ]+:|$))/gs;
+      const talkList = [];
+      let match;
+
+      while ((match = regex.exec(dialogueText)) !== null) {
+        const name = match[1].trim();
+        const lineText = match[2].trim();
+        talkList.push(`[${name}]${lineText}`);
       }
 
-      const key1 = splitList[0];
-      const key2 = splitList[1];
-      var obj = {};
+      // 格納
+      const obj = {};
       obj[key2] = talkList;
       if (talkContents[key1] == null) talkContents[key1] = obj;
       else talkContents[key1][key2] = talkList;
@@ -517,7 +527,7 @@ const main = async function () {
   async function readNPCData() {
     // read npc data
     let csv = new XMLHttpRequest();
-    csv.open("GET", getBasePath() + "/data/npc_name.csv", false);
+    csv.open("GET", getBasePath() + "/data/npc_name_en.csv", false);
     csv.send(null);
     const npcArray = UtilsCSV.convertCSVtoArray(csv.responseText);
 
@@ -597,7 +607,7 @@ function getBasePath() {
  */
 async function readTalkData() {
   let csv = new XMLHttpRequest();
-  csv.open("GET", getBasePath() + "data/character_conversations.csv", false);
+  csv.open("GET", getBasePath() + "data/character_conversations_en.csv", false);
   csv.send(null);
   return UtilsCSV.convertCSVtoArray(csv.responseText);
 }

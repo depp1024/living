@@ -81,18 +81,33 @@ export class UtilsMath {
    * @return {Object.<Array.<Number>, Array.<Number>>} latlngRect - 緯度経度の矩形範囲
    * @memberof UtilsMath
    */
-  static getLatLngRect(lat, lng, radius) {
-    const radiusLat = 0.01096 * radius;
-    const radiusLng = 0.00901 * radius;
-    const halfLat = radiusLat / 1.4142;
-    const halfLng = radiusLng / 1.4142;
-    const latTop = lat + halfLat;
-    const latBottom = lat - halfLat;
-    const lngLeft = lng - halfLng;
-    const lngRight = lng + halfLng;
+  static getLatLngRect(lat, lng, radiusKm) {
+    // 経度を -180〜180 に正規化する関数をローカル定義
+    const normalizeLng = (lng) => ((((lng + 180) % 360) + 360) % 360) - 180;
+
+    // 正規化した中心経度から開始
+    lng = normalizeLng(lng);
+
+    const earthRadiusKm = 6371;
+    const dLat = (radiusKm / earthRadiusKm) * (180 / Math.PI);
+    const dLng =
+      ((radiusKm / earthRadiusKm) * (180 / Math.PI)) /
+      Math.cos((lat * Math.PI) / 180);
+
+    const latTop = lat + dLat;
+    const latBottom = lat - dLat;
+
+    // 左右端を計算してから正規化
+    let lngLeft = normalizeLng(lng - dLng);
+    let lngRight = normalizeLng(lng + dLng);
+
+    // ±180 を跨いだ場合（例: 左が 170、右が -170）
+    const crossesAntimeridian = lngLeft > lngRight;
+
     return {
       bottomleft: [latBottom, lngLeft],
       topright: [latTop, lngRight],
+      crossesAntimeridian, // クエリ側で2分割するためのフラグ
     };
   }
 }

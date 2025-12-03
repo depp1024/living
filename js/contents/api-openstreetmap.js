@@ -123,24 +123,29 @@ export class OSMApi {
    */
   static async getWayInfo(lat, lng, radius, abortSignal) {
     console.log("request start getWayInfo");
-    const queryDefine = "[out:json][timeout:60][maxsize:134217728];";
     const rectLatLng = UtilsMath.getLatLngRect(lat, lng, radius);
-    const rectStr =
-      "(" +
-      rectLatLng.bottomleft[0] +
-      "," +
-      rectLatLng.bottomleft[1] +
-      "," +
-      rectLatLng.topright[0] +
-      "," +
-      rectLatLng.topright[1] +
-      ");";
-    const queryContent = "way[highway]" + rectStr;
-    const queryOut = "out;";
-    const queryString = queryDefine + queryContent + "(._;>;);" + queryOut;
-    const queryURLEncoded = encodeURI(queryString);
+    const south = rectLatLng.bottomleft[0];
+    const west = rectLatLng.bottomleft[1];
+    const north = rectLatLng.topright[0];
+    const east = rectLatLng.topright[1];
+
+    const rects = rectLatLng.crossesAntimeridian
+      ? [
+          `(${south},${west},${north},180);`,
+          `(${south},-180,${north},${east});`,
+        ]
+      : [`(${south},${west},${north},${east});`];
+
+    const queryDefine = "[out:json][timeout:60][maxsize:134217728];";
+    let queryContent = "(";
+    for (const r of rects) {
+      queryContent += `way[highway]${r}`;
+    }
+    queryContent += ");";
+    const queryString = queryDefine + queryContent + "(._;>;);out;";
     const requestUrl =
-      "https://overpass-api.de/api/interpreter?data=" + queryURLEncoded;
+      "https://overpass-api.de/api/interpreter?data=" +
+      encodeURIComponent(queryString);
 
     let responseData = { node: {}, way: {} };
     await fetch(requestUrl, { signal: abortSignal })
@@ -196,23 +201,25 @@ export class OSMApi {
    * @return {String} OpenStreetMapへリクエストするクエリ形式になってる文字列
    * @memberof OSMApi
    */
-  static getFacilityQueryString(lat, lng, radius, amenityArray) {
-    // TODO : 西半球時のデバッグ
-    const rectLatLng = UtilsMath.getLatLngRect(lat, lng, radius);
-    const rectStr =
-      "(" +
-      rectLatLng.bottomleft[0] +
-      "," +
-      rectLatLng.bottomleft[1] +
-      "," +
-      rectLatLng.topright[0] +
-      "," +
-      rectLatLng.topright[1] +
-      ")";
+  static getFacilityQueryString(lat, lng, radiusKm, amenityArray) {
+    const rectLatLng = UtilsMath.getLatLngRect(lat, lng, radiusKm);
+
+    const south = rectLatLng.bottomleft[0];
+    const west = rectLatLng.bottomleft[1];
+    const north = rectLatLng.topright[0];
+    const east = rectLatLng.topright[1];
+
+    // 2分割： [west, 180] と [-180, east]
+    const rects = rectLatLng.crossesAntimeridian
+      ? [`(${south},${west},${north},180)`, `(${south},-180,${north},${east})`]
+      : [`(${south},${west},${north},${east})`];
+
     let str = "(";
-    amenityArray.forEach(function (element) {
-      str += element + rectStr + ";";
-    });
+    for (const amenity of amenityArray) {
+      for (const r of rects) {
+        str += amenity + r + ";";
+      }
+    }
     str += ");";
     return str;
   }

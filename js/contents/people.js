@@ -230,7 +230,7 @@ export class People {
       // this.marker.closePopup();
     }
 
-    console.log("移動終了. PeopleID:" + this.name);
+    // console.log("移動終了. PeopleID:" + this.name);
   }
 
   /**
@@ -361,14 +361,22 @@ export class People {
       this.destination_amenity = "";
     }
 
+    // console.log("[setPlayerRoute] start:", plotPoint, 
+    //         "goal:", this.goalPlotPoint,
+    //         "grid start:", this.graph.grid[plotPoint.x][plotPoint.y],
+    //         "grid goal:", this.graph.grid[this.goalPlotPoint.x][this.goalPlotPoint.y]);
+
     // ルートがあるかチェックしてなければ現在地を目的地にしてもう一度別の場所を探すようにする
     const route = astar.search(
       this.graph,
       this.graph.grid[plotPoint.x][plotPoint.y],
       this.graph.grid[this.goalPlotPoint.x][this.goalPlotPoint.y]
     );
+
+    // console.log("[setPlayerRoute] route length:", route.length);
     if (route.length == 0) {
       this.goalPlotPoint = plotPoint;
+      // console.log("[setNextGoalPlotPoint] route not found. reset goalPlotPoint to startPlotPoint.");
     }
 
     let comment = "";
@@ -550,7 +558,7 @@ export class People {
       this.marker.bounce(2);
       await People.wait(2000);
 
-      const talkingTime = 5000;
+      const talkingTime = 10000;
 
       for (let i = 0; i < talkArray.length; i++) {
         if (talkArray[i].includes(this.nickname)) {
@@ -561,7 +569,7 @@ export class People {
 
           this.marker.bindPopup('<span id="' + tagID + '"/>' + talkContent, {
             autoClose: false,
-            autoPan: false,
+            autoPan: true,
             className: "character-popup",
           });
           this.marker.openPopup();
