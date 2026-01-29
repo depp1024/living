@@ -20,7 +20,10 @@ const main = async function () {
   // ブラウザから取得できる座標を優先
   // 取得できなかった場合は言語コードから国を推定しその首都に設定
   const defaultLatlng = await getDefaultLatlng();
-  const defaultZoomLevel = 16;
+  const defaultZoomLevel = 15;
+
+  // ===== Guide Popup Config =====
+  const GUIDE_POPUP_ALWAYS_SHOW = false; // ← テスト中は true、本番は false
 
   // area content
   let areaContentList = Array();
@@ -61,12 +64,14 @@ const main = async function () {
       attribution:
         '© <a href="https://osm.org/copyright">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
       className: "desaturated-map", // 新しいクラスを追加
-    }
+    },
   );
   tileLayer.addTo(map);
 
   map.on("load", async function () {
     await addAreaContent(map);
+    hideInitialLoading();
+    showFirstGuidePopup();
   });
   map.setView([defaultLatlng.lat, defaultLatlng.lng], defaultZoomLevel);
 
@@ -144,6 +149,81 @@ const main = async function () {
     return nearest;
   }
 
+  function showOverlayPopup({
+    id,
+    html,
+    autoCloseMs = null,
+    fadeOutMs = 1000,
+    closable = false,
+  }) {
+    const popup = document.createElement("div");
+    popup.className = "overlay-popup";
+    if (id) popup.id = id;
+
+    popup.innerHTML = `
+    <div class="overlay-popup-content">
+      ${html}
+      ${closable ? `<button class="overlay-close">OK</button>` : ""}
+    </div>
+  `;
+
+    document.body.appendChild(popup);
+
+    // フェードイン
+    requestAnimationFrame(() => {
+      popup.classList.add("show");
+    });
+
+    const close = () => {
+      popup.classList.remove("show");
+      setTimeout(() => popup.remove(), fadeOutMs);
+    };
+
+    if (closable) {
+      popup.querySelector(".overlay-close").onclick = close;
+    }
+
+    if (autoCloseMs) {
+      setTimeout(close, autoCloseMs);
+    }
+
+    return { close };
+  }
+
+  function showFirstGuidePopup() {
+    const STORAGE_KEY = "wayawaya_first_guide_shown";
+
+    if (!GUIDE_POPUP_ALWAYS_SHOW) {
+      if (localStorage.getItem(STORAGE_KEY)) return;
+      localStorage.setItem(STORAGE_KEY, "true");
+    }
+
+    showOverlayPopup({
+      id: "wayawaya-first-guide",
+      autoCloseMs: 11500,
+      html: `
+      <div class="guide-content">
+        <p>
+          🌍 This is a sample city.<br><br>
+
+          Click the icon in the top-left<br>
+          to move to your city.<br><br>
+
+          You can also move the map<br>
+          by dragging or tapping.
+        </p>
+      </div>
+    `,
+    });
+  }
+
+  function hideInitialLoading() {
+    const el = document.getElementById("initial-loading");
+    if (!el) return;
+    el.classList.remove("show");
+    setTimeout(() => el.remove(), 1000);
+  }
+
   /**
    * 地図上のコンテンツをセットアップする関数
    *
@@ -165,18 +245,18 @@ const main = async function () {
     rectLatLng = UtilsMath.getLatLngRect(
       centerLatlng.lat,
       centerLatlng.lng,
-      queryRadius
+      queryRadius,
     );
 
     let nodeAsterBottomleft = UtilsMath.convertLatlngToAsterCoordinate(
       rectLatLng,
       rectLatLng.bottomleft[0],
-      rectLatLng.bottomleft[1]
+      rectLatLng.bottomleft[1],
     );
     let nodeAsterTopright = UtilsMath.convertLatlngToAsterCoordinate(
       rectLatLng,
       rectLatLng.topright[0],
-      rectLatLng.topright[1]
+      rectLatLng.topright[1],
     );
     const nodeAsterSizeX = nodeAsterTopright[0] - nodeAsterBottomleft[0];
     const nodeAsterSizeY = nodeAsterTopright[1] - nodeAsterBottomleft[1];
@@ -195,7 +275,7 @@ const main = async function () {
         centerLatlng.lat,
         centerLatlng.lng,
         queryRadius,
-        abortController.signal
+        abortController.signal,
       );
     } catch (err) {
       throw err;
@@ -214,7 +294,7 @@ const main = async function () {
         centerLatlng.lng,
         queryRadius,
         Object.values(OSMApi.amenityQueryList),
-        abortController.signal
+        abortController.signal,
       );
     } catch (err) {
       throw err;
@@ -239,11 +319,11 @@ const main = async function () {
         let nearestNodes = getNearestFunction(
           facilityTree,
           { lat: latLng.lat, lon: latLng.lng },
-          1
+          1,
         );
         let distance = distanceUsingLatlon(
           { lat: nearestNodes[0][0].lat, lon: nearestNodes[0][0].lon },
-          { lat: wayInfo.node[key].lat, lon: wayInfo.node[key].lon }
+          { lat: wayInfo.node[key].lat, lon: wayInfo.node[key].lon },
         );
         // meter
         const nearThreshold = 30;
@@ -267,12 +347,12 @@ const main = async function () {
             UtilsMath.convertLatlngToAsterCoordinate(
               rectLatLng,
               wayInfo.node[value.nodes[i]].lat,
-              wayInfo.node[value.nodes[i]].lon
+              wayInfo.node[value.nodes[i]].lon,
             ),
             UtilsMath.convertLatlngToAsterCoordinate(
               rectLatLng,
               wayInfo.node[value.nodes[i + 1]].lat,
-              wayInfo.node[value.nodes[i + 1]].lon
+              wayInfo.node[value.nodes[i + 1]].lon,
             ),
           ];
 
@@ -280,7 +360,7 @@ const main = async function () {
             nodeAsterPair[0][0],
             nodeAsterPair[0][1],
             nodeAsterPair[1][0],
-            nodeAsterPair[1][1]
+            nodeAsterPair[1][1],
           );
 
           let debugIndex = 0;
@@ -295,7 +375,7 @@ const main = async function () {
                 0,
                 0,
                 nodeAsterSizeX - 1,
-                nodeAsterSizeY - 1
+                nodeAsterSizeY - 1,
               )
             ) {
               graphArray[x][y] = 1;
@@ -410,7 +490,7 @@ const main = async function () {
           graphNodeInfoArray,
           wayInfo,
           nodeInfoPlotTree,
-          getNearestFunction
+          getNearestFunction,
         );
         player.run(plotArray);
         peopleList.push(player);
@@ -470,38 +550,12 @@ const main = async function () {
    * @return {Object.<Number, Number>} - デフォルトで表示する緯度経度
    */
   async function getDefaultLatlng() {
-    const languagesAcceptedList = window.navigator.languages || [
-      window.navigator.language ||
-        window.navigator.userLanguage ||
-        window.navigator.browserLanguage,
-    ];
-
-    let defaultLatlng = { lat: 51.504827, lng: -0.0786264 };
-    try {
-      let navLocation = await getNavigateLocation();
-      defaultLatlng.lat = navLocation.coords.latitude;
-      defaultLatlng.lng = navLocation.coords.longitude;
-    } catch (e) {
-      console.log(e);
-
-      const locationMap = new Map([
-        ["ja", { lat: 35.6896342, lng: 139.6921007 }],
-        ["en-US", { lat: 38.8954503, lng: -77.0158701 }],
-        ["en-GB", { lat: 51.504827, lng: -0.0786264 }],
-        ["fr", { lat: 48.8564826, lng: 2.3524135 }],
-        ["it", { lat: 41.8930546, lng: 12.4834738 }],
-      ]);
-
-      for (const [key, value] of locationMap.entries()) {
-        if (languagesAcceptedList.includes(key)) {
-          defaultLatlng.lat = value.lat;
-          defaultLatlng.lng = value.lng;
-          break;
-        }
-      }
-    }
-
-    return defaultLatlng;
+    // itch.io最多ユーザ想定：US → New York
+    // ※ 将来差し替えやすいように明示
+    return {
+      lat: 40.7128,
+      lng: -74.006,
+    };
   }
 
   /**
@@ -580,7 +634,7 @@ const main = async function () {
       graphNodeInfoArray,
       wayInfo,
       nodeInfoPlotTree,
-      getNearestFunction
+      getNearestFunction,
     );
     player.run(plotArray);
     peopleList.push(player);

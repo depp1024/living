@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
@@ -29,6 +29,16 @@
   <body>
     <div id="mapid"></div>
 
+    <!-- ★ 初期ローディング（最初から表示） -->
+    <div id="initial-loading" class="overlay show">
+      <div class="overlay-content">
+        <p>
+          🌍 Preparing characters and routes...<br /><br />
+          Please wait a moment.
+        </p>
+      </div>
+    </div>
+
     <!-- Load Library Script -->
     <script
       src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
@@ -38,8 +48,11 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/leaflet.marker.slideto@0.2.0/Leaflet.Marker.SlideTo.js"></script>
     <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
-    <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>    
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"
+    />
+    <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
     <script src="js/lib/jquery-3.7.1.min.js"></script>
     <script src="js/lib/kdTree-min.js"></script>
     <script src="js/lib/astar.js"></script>
