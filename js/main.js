@@ -10,6 +10,10 @@ import { OSMApi } from "./contents/api-openstreetmap.js";
  *
  */
 const main = async function () {
+  // ===== Storage Key =====
+  const GUIDE_POPUP_ALWAYS_SHOW = false; // ← テスト中は true、本番は false
+  const LAST_VIEW_KEY = "wayawaya_last_view";
+
   // 乱数シード値初期化
   Math.random.seed(1);
 
@@ -21,9 +25,6 @@ const main = async function () {
   // 取得できなかった場合は言語コードから国を推定しその首都に設定
   const defaultLatlng = await getDefaultLatlng();
   const defaultZoomLevel = 15;
-
-  // ===== Guide Popup Config =====
-  const GUIDE_POPUP_ALWAYS_SHOW = false; // ← テスト中は true、本番は false
 
   // area content
   let areaContentList = Array();
@@ -48,7 +49,7 @@ const main = async function () {
       position: "topright",
     })
     .addTo(map);
-    
+
   // map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -95,6 +96,17 @@ const main = async function () {
     } else if (zoomLevelEnd <= thresholdZoomLevel) {
       clearAreaContent();
     }
+  });
+
+  map.on("moveend", () => {
+    const center = map.getCenter();
+
+    const data = {
+      lat: center.lat,
+      lng: center.lng,
+    };
+
+    localStorage.setItem(LAST_VIEW_KEY, JSON.stringify(data));
   });
 
   /**
@@ -542,6 +554,17 @@ const main = async function () {
    * @return {Object.<Number, Number>} - デフォルトで表示する緯度経度
    */
   async function getDefaultLatlng() {
+    const saved = localStorage.getItem(LAST_VIEW_KEY);
+
+    if (saved) {
+      try {
+        const { lat, lng } = JSON.parse(saved);
+        return { lat, lng };
+      } catch {
+        // 壊れてたら無視
+      }
+    }
+
     // itch.io最多ユーザ想定：US → New York
     // ※ 将来差し替えやすいように明示
     return {
