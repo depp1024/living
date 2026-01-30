@@ -43,20 +43,12 @@ const main = async function () {
 
   // OpenStreetMapを扱うライブラリLeaflet関連の初期化
   let map = L.map("mapid", { zoomControl: false });
-  // GUI
   L.control
-    .locate({
-      position: "topleft", // 位置を指定
-      drawCircle: true, // 現在地に円を描画
-      follow: true, // 追従モード
-      setView: "once",
-      keepCurrentZoomLevel: false,
-      markerStyle: { color: "#2d89ef" },
-      circleStyle: { color: "#2d89ef", fillColor: "#2d89ef" },
-      strings: { title: "現在地を表示" }, // ホバー時のツールチップ
+    .zoom({
+      position: "topright",
     })
     .addTo(map);
-
+    
   // map.addControl(new L.Control.Fullscreen());
   let tileLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
